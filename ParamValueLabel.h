@@ -5,7 +5,8 @@
 
 #include <string>
 
-static const int pxTextEntryWidth = 60;
+static const int pxDefaultHeight = 15;
+static const int pxDefaultTextEntryWidth = 60;
 
 static IText defaultParamText(18, &COLOR_WHITE, "Roboto", IText::kStyleNormal, IText::kAlignCenter, 0, IText::kQualityDefault);
 static IText defaultEditingText(18, &COLOR_BLACK, "Roboto", IText::kStyleNormal, IText::kAlignCenter, 0, IText::kQualityDefault);
@@ -13,9 +14,11 @@ static IText defaultEditingText(18, &COLOR_BLACK, "Roboto", IText::kStyleNormal,
 class ParamValueLabel : public ITextControl
 {
 public:
-	ParamValueLabel(IPlugBase* pPlug, int paramIdx, int x, int y, int width, int height);
+	ParamValueLabel(IPlugBase* pPlug, int paramIdx, int x, int y, int width, int height = pxDefaultHeight);
 	ParamValueLabel(IPlugBase* pPlug, int paramIdx, IRECT pR);
 	~ParamValueLabel();
+
+	void SetTextEntryWidth(int width);
 
 	void UpdateDisplay();
 	void SetText(char* text);
@@ -28,7 +31,7 @@ private:
 	IParam* mpParam;
 	IRECT mEntryRect;
 
-	IRECT TextEntryRect();
+	IRECT TextEntryRect(int width);
 };
 
 #endif // !__PARAMVALUELABEL__

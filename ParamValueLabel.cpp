@@ -10,12 +10,17 @@ ParamValueLabel::ParamValueLabel(IPlugBase* pPlug, int paramIdx, IRECT pR) :
 {
 	mParamIdx = paramIdx;
 	mpParam = pPlug->GetParam(mParamIdx);
-	mEntryRect = TextEntryRect();
+	SetTextEntryWidth(pxDefaultTextEntryWidth);
 	UpdateDisplay();
 }
 
 ParamValueLabel::~ParamValueLabel()
 {
+}
+
+void ParamValueLabel::SetTextEntryWidth(int width)
+{
+	mEntryRect = TextEntryRect(width);
 }
 
 void ParamValueLabel::UpdateDisplay()
@@ -24,6 +29,7 @@ void ParamValueLabel::UpdateDisplay()
 	mpParam->GetDisplayForHost((char*) display);
 	// add a space
 	strcat((char*) display, " ");
+	// add the unit label
 	const char* label = mpParam->GetLabelForHost();
 	strcat((char*) display, label);
 	SetText((char*) display);
@@ -63,8 +69,8 @@ void ParamValueLabel::TextFromTextEntry(const char* text)
 	}
 }
 
-IRECT ParamValueLabel::TextEntryRect()
+IRECT ParamValueLabel::TextEntryRect(int width)
 {
-	int dWidth = (mRECT.R - mRECT.L) - pxTextEntryWidth;
+	int dWidth = (mRECT.R - mRECT.L) - width;
 	return IRECT(mRECT.L + (dWidth / 2), mRECT.T, mRECT.R - (dWidth / 2), mRECT.B);
 }

@@ -45,6 +45,12 @@ void InitFrequencyParameter(IParam* pParam)
 	pParam->SetShape(3.0);
 }
 
+void InitFrequencyLabel(ParamValueLabel* pLabel)
+{
+	pLabel->SetTextEntryWidth(80);
+	pLabel->SetTextEntryLength(9);
+}
+
 void InitWaveformParameter(IParam* pParam)
 {
 	pParam->InitEnum("Waveform", 0, kNumOscillatorModes, "");
