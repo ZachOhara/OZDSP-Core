@@ -1,5 +1,10 @@
 #include "ParamValueLabel.h"
 
+ParamValueLabel::ParamValueLabel(IPlugBase* pPlug, int paramIdx, int x, int y, int width, int height) :
+	ParamValueLabel(pPlug, paramIdx, IRECT(x, y, x + width, y + height))
+{
+}
+
 ParamValueLabel::ParamValueLabel(IPlugBase* pPlug, int paramIdx, IRECT pR) :
 	ITextControl(pPlug, pR, &defaultParamText, "")
 {

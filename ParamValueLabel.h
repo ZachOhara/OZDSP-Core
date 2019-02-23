@@ -13,6 +13,7 @@ static IText defaultEditingText(18, &COLOR_BLACK, "Roboto", IText::kStyleNormal,
 class ParamValueLabel : public ITextControl
 {
 public:
+	ParamValueLabel(IPlugBase* pPlug, int paramIdx, int x, int y, int width, int height);
 	ParamValueLabel(IPlugBase* pPlug, int paramIdx, IRECT pR);
 	~ParamValueLabel();
 
