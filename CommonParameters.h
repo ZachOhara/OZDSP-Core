@@ -14,6 +14,7 @@ void HandleVolumeParamChange(IParam* pParam, VolumeControl* pVolControl);
 void InitFrequencyParameter(IParam* pParam);
 void InitFrequencyLabel(ParamValueLabel* pLabel);
 void InitWaveformParameter(IParam* pParam);
+void InitPercentParameter(IParam* pParam, char* name, double defaultValue);
 
 // Parameter tools
 void ForceUpdateParams(IPlugBase* pPlug);

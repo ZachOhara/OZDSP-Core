@@ -60,6 +60,11 @@ void InitWaveformParameter(IParam* pParam)
 	pParam->SetDisplayText(3, "Sawtooth");
 }
 
+void InitPercentParameter(IParam* pParam, char* name, double defaultValue)
+{
+	pParam->InitDouble(name, defaultValue, 0.0, 100.0, 0.1, "%");
+}
+
 void ForceUpdateParams(IPlugBase* pPlug)
 {
 	int nParams = pPlug->NParams();
