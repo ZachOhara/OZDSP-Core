@@ -38,7 +38,7 @@ void HandleVolumeParamChange(IParam* pParam, VolumeControl* pVolControl)
 
 void InitFrequencyParameter(IParam* pParam)
 {
-	const double min_hz = 40.0;
+	const double min_hz = 20.0;
 	const double max_hz = 15000.0;
 	const double default_hz = 440.0; // A 4
 	pParam->InitDouble("Frequency", default_hz, min_hz, max_hz, 0.01, "Hz");
