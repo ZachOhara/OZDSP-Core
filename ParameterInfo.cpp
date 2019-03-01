@@ -49,7 +49,7 @@ ParameterInfo& ParameterInfo::InitParam(std::string name, int paramIdx, int posX
 ParameterInfo& ParameterInfo::InitSelectionParam(std::vector<std::string> states, bool isDropdown)
 {
 	mIsParamSelection = true;
-	mStateList = states;
+	mStateList = std::vector<std::string>(states);
 	mIsDropdown = isDropdown;
 	return *this;
 }
@@ -61,14 +61,14 @@ ParameterInfo& ParameterInfo::InitNumericParam(double defaultValue, double min, 
 	mMinValue = min;
 	mMaxValue = max;
 	mValueStep = step;
-	mUnitLabel = unit;
+	mUnitLabel = std::string(unit);	
 	return *this;
 }
 
 ParameterInfo& ParameterInfo::InitLabel()
 {
 	mIsParamLabeled = true;
-	// Defaults are already set, yay
+	// Use the pre-set default values
 	return *this;
 }
 

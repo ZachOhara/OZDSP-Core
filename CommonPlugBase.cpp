@@ -63,6 +63,22 @@ IGraphics* CommonPlugBase::GetGraphics()
 	return mpGraphics;
 }
 
+void CommonPlugBase::ForceUpdateParameters()
+{
+	int nParams = NParams();
+	for (int i = 0; i < nParams; i++)
+	{
+		OnParamChange(i);
+	}
+}
+
+void CommonPlugBase::FinishConstruction()
+{
+	AttachGraphics(GetGraphics());
+	CreatePresets();
+	ForceUpdateParameters();
+}
+
 void CommonPlugBase::InitializeParameter(ParameterInfo& param, IBitmap& bitmap)
 {
 	if (param.IsParam())

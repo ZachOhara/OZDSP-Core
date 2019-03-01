@@ -68,14 +68,14 @@ private:
 
 	// Data for all parameter types
 	bool mIsParam = false;
-	std::string& mParamName = std::string("");
+	std::string mParamName = "";
 	int mParamIndex;
 	int mPosX;
 	int mPosY;
 
 	// Data for selection parameters
 	bool mIsParamSelection = false;
-	std::vector<std::string>& mStateList = std::vector<std::string>();
+	std::vector<std::string> mStateList = std::vector<std::string>();
 	bool mIsDropdown;
 
 	// Data for numeric value parameters
@@ -84,7 +84,7 @@ private:
 	double mMinValue;
 	double mMaxValue;
 	double mValueStep;
-	std::string& mUnitLabel = std::string("");
+	std::string mUnitLabel = "";
 	double mValueShapeFactor = 1.0;
 
 	// Data for parameters with labels
