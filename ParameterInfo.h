@@ -6,17 +6,6 @@
 #include <string>
 #include <vector>
 
-/*
-enum ECommonParameters
-{
-	kUnspecified,
-	kFrequency,
-	kToneMix,
-	kVolume,
-	kWaveformSelect,
-};
-*/
-
 class ParameterInfo
 {
 public:
@@ -29,7 +18,7 @@ public:
 	ParameterInfo& MakeWaveformParam();
 
 	// General initializers
-	ParameterInfo& InitParam(std::string name, int paramIdx, int posX, int posY);
+	ParameterInfo& InitParam(std::string name, int paramIdx, int bitmapId, int posX, int posY);
 	ParameterInfo& InitSelectionParam(std::vector<std::string> states, bool isDropdown);
 	ParameterInfo& InitNumericParam(double defaultValue, double min, double max,
 		double step, std::string unit);
@@ -42,6 +31,7 @@ public:
 	bool IsParam();
 	std::string& Name();
 	int ParamIndex();
+	int BitmapId();
 	int PosX();
 	int PosY();
 
@@ -64,18 +54,17 @@ public:
 	// TODO
 
 private:
-	//int mCommonParameterType = kUnspecified;
-
 	// Data for all parameter types
 	bool mIsParam = false;
-	std::string mParamName = "";
+	std::string mParamName;
 	int mParamIndex;
+	int mBitmapId;
 	int mPosX;
 	int mPosY;
 
 	// Data for selection parameters
 	bool mIsParamSelection = false;
-	std::vector<std::string> mStateList = std::vector<std::string>();
+	std::vector<std::string> mStateList;
 	bool mIsDropdown;
 
 	// Data for numeric value parameters
@@ -84,7 +73,7 @@ private:
 	double mMinValue;
 	double mMaxValue;
 	double mValueStep;
-	std::string mUnitLabel = "";
+	std::string mUnitLabel;
 	double mValueShapeFactor = 1.0;
 
 	// Data for parameters with labels

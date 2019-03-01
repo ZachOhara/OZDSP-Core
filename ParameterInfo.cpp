@@ -36,11 +36,12 @@ ParameterInfo& ParameterInfo::MakeWaveformParam()
 		.InitSelectionParam({ "Sine", "Triangle", "Square", "Sawtooth" }, false);
 }
 
-ParameterInfo& ParameterInfo::InitParam(std::string name, int paramIdx, int posX, int posY)
+ParameterInfo& ParameterInfo::InitParam(std::string name, int paramIdx, int bitmapId, int posX, int posY)
 {
 	mIsParam = true;
 	mParamName = name;
 	mParamIndex = paramIdx;
+	mBitmapId = bitmapId;
 	mPosX = posX;
 	mPosY = posY;
 	return *this;
@@ -91,6 +92,11 @@ std::string& ParameterInfo::Name()
 int ParameterInfo::ParamIndex()
 {
 	return mParamIndex;
+}
+
+int ParameterInfo::BitmapId()
+{
+	return mBitmapId;
 }
 
 int ParameterInfo::PosX()

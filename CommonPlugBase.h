@@ -5,6 +5,7 @@
 
 #include "ParameterInfo.h"
 
+#include <map>
 #include <string>
 #include <vector>
 
@@ -44,12 +45,22 @@ protected:
 
 	IGraphics* GetGraphics();
 
+	void SetBackground(int id, std::string name);
+	void RegisterBitmap(int id, std::string name, int nFrames);
+
 	void ForceUpdateParameters();
 	void FinishConstruction();
-	void InitializeParameter(ParameterInfo& param, IBitmap& bitmap);
-
+	void AddParameters(std::vector<ParameterInfo>& paramList);
+	void AddParameter(ParameterInfo& param);
+	
 private:
 	IGraphics* mpGraphics;
+
+	std::map<int, IBitmap> mBitmapRegistry;
+
+	void AddSelectionParameter(ParameterInfo& param, IParam* pParamObj, IBitmap& bitmap);
+	void AddNumericParameter(ParameterInfo& param, IParam* pParamObj, IBitmap& bitmap);
+	void AddParameterLabel(ParameterInfo& param, IParam* pParamObj, IBitmap& bitmap);
 };
 
 #endif // !__COMMON_PLUG_BASE__
