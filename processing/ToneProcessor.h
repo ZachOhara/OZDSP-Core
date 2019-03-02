@@ -1,11 +1,11 @@
-#ifndef __TONECONTROL__
-#define __TONECONTROL__
+#ifndef __TONE_PROCESSOR_H__
+#define __TONE_PROCESSOR_H__
 
-class ToneControl
+class ToneProcessor
 {
 public:
-	ToneControl();
-	~ToneControl();
+	ToneProcessor();
+	~ToneProcessor();
 
 	double GetAdjustedSample(double input, double output);
 
@@ -16,4 +16,4 @@ private:
 	double mMixFactor;
 };
 
-#endif // !__TONECONTROL__
+#endif // !__TONE_PROCESSOR_H__

@@ -1,5 +1,5 @@
-#ifndef __PARAMETER_VALUE_LABEL__
-#define __PARAMETER_VALUE_LABEL__
+#ifndef __PARAMETER_VALUE_LABEL_H__
+#define __PARAMETER_VALUE_LABEL_H__
 
 #include "IPlug_include_in_plug_hdr.h"
 
@@ -30,4 +30,4 @@ private:
 	static IText ConstructText(int fontSize, IColor color);
 };
 
-#endif // !__PARAMETER_VALUE_LABEL__
+#endif // !__PARAMETER_VALUE_LABEL_H__

@@ -1,7 +1,5 @@
-#ifndef  __PARAMETER_INFO__
-#define __PARAMETER_INFO__
-
-#include "IPlug_include_in_plug_hdr.h"
+#ifndef  __PARAMETER_INFO_H__
+#define __PARAMETER_INFO_H__
 
 #include <string>
 #include <vector>
@@ -99,4 +97,4 @@ private:
 	int mLabelFontSize = 18;
 };
 
-#endif // ! __PARAMETER_INFO__
+#endif // ! __PARAMETER_INFO_H__

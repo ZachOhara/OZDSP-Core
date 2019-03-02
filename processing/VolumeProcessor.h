@@ -1,16 +1,16 @@
-#ifndef __VOLUMECONTROL__
-#define __VOLUMECONTROL__
+#ifndef __VOLUME_PROCESSOR_H__
+#define __VOLUME_PROCESSOR_H__
 
 #include <math.h>
 
 double GetAmpFactor(double decibels);
 double GetDecibels(double ampFactor);
 
-class VolumeControl
+class VolumeProcessor
 {
 public:
-	VolumeControl();
-	~VolumeControl();
+	VolumeProcessor();
+	~VolumeProcessor();
 
 	double GetAdjustedSample(double sample);
 
@@ -22,5 +22,5 @@ private:
 	double mAmpFactor;
 };
 
-#endif __VOLUMECONTROL__
+#endif __VOLUME_PROCESSOR_H__
 

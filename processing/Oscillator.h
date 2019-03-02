@@ -1,5 +1,5 @@
-#ifndef __OSCILLATOR__
-#define __OSCILLATOR__
+#ifndef __OSCILLATOR_H__
+#define __OSCILLATOR_H__
 
 #include <cmath>
 
@@ -37,5 +37,5 @@ private:
 	void UpdatePhaseIncrement();
 };
 
-#endif // !__OSCILLATOR__
+#endif // !__OSCILLATOR_H__
 

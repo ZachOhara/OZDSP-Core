@@ -1,10 +1,11 @@
-#ifndef __COMMON_PLUG_BASE__
-#define __COMMON_PLUG_BASE__
+#ifndef __COMMON_PLUG_BASE_H__
+#define __COMMON_PLUG_BASE_H__
 
 #include "IPlug_include_in_plug_hdr.h"
+#include "resource.h"
 
-#include "ParameterInfo.h"
-#include "ParameterValueLabel.h"
+#include "parameter/ParameterInfo.h"
+#include "parameter/ParameterValueLabel.h"
 
 #include <map>
 #include <string>
@@ -68,4 +69,4 @@ private:
 	static IRECT ConstructEditingRect(ParameterInfo& param, IRECT& labelRect);
 };
 
-#endif // !__COMMON_PLUG_BASE__
+#endif // !__COMMON_PLUG_BASE_H__

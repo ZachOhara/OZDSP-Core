@@ -1,30 +1,30 @@
-#include "VolumeControl.h"
+#include "VolumeProcessor.h"
 
-VolumeControl::VolumeControl():
+VolumeProcessor::VolumeProcessor():
 	mAmpFactor(1.0)
 {
 }
 
-VolumeControl::~VolumeControl()
+VolumeProcessor::~VolumeProcessor()
 {
 }
 
-double VolumeControl::GetAdjustedSample(double sample)
+double VolumeProcessor::GetAdjustedSample(double sample)
 {
 	return sample * mAmpFactor;
 }
 
-void VolumeControl::SetDecibels(double decibels)
+void VolumeProcessor::SetDecibels(double decibels)
 {
 	SetAmpFactor(GetAmpFactor(decibels));
 }
 
-void VolumeControl::SetZero()
+void VolumeProcessor::SetZero()
 {
 	SetAmpFactor(0.0);
 }
 
-void VolumeControl::SetAmpFactor(double ampFactor)
+void VolumeProcessor::SetAmpFactor(double ampFactor)
 {
 	mAmpFactor = ampFactor;
 }
