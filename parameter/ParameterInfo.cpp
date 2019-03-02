@@ -21,6 +21,12 @@ ParameterInfo& ParameterInfo::MakeFrequencyParam()
 		.SetLabelEditChars(8);
 }
 
+ParameterInfo& ParameterInfo::MakePercentageParam(double defaultValue)
+{
+	return (*this)
+		.InitNumericParam(defaultValue, 0.0, 100.0, 0.01, "%");
+}
+
 ParameterInfo& ParameterInfo::MakeVolumeReductionParam()
 {
 	static const double min_db = -100.0;

@@ -52,6 +52,18 @@ private:
 	Oscillator* mpProcessor;
 };
 
+class ToneDataBridge : public ParameterDataBridge
+{
+public:
+	ToneDataBridge(IParam* pParam, ToneProcessor* pProcessor);
+	~ToneDataBridge();
+
+	void HandleUpdate() override;
+
+private:
+	ToneProcessor* mpProcessor;
+};
+
 class VolumeDataBridge : public ParameterDataBridge
 {
 public:

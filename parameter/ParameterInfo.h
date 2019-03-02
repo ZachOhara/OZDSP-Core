@@ -12,6 +12,7 @@ public:
 
 	// Common parameter types
 	ParameterInfo& MakeFrequencyParam();
+	ParameterInfo& MakePercentageParam(double defaultValue = 100.0);
 	ParameterInfo& MakeVolumeReductionParam();
 	ParameterInfo& MakeWaveformParam();
 

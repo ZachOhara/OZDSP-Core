@@ -64,6 +64,21 @@ void OscillatorWaveformDataBridge::HandleUpdate()
 	mpProcessor->SetMode(ParamInt());
 }
 
+ToneDataBridge::ToneDataBridge(IParam* pParam, ToneProcessor* pProcessor) :
+	ParameterDataBridge(pParam)
+{
+	mpProcessor = pProcessor;
+}
+
+ToneDataBridge::~ToneDataBridge()
+{
+}
+
+void ToneDataBridge::HandleUpdate()
+{
+	mpProcessor->SetMixPercent(ParamValue());
+}
+
 VolumeDataBridge::VolumeDataBridge(IParam* pParam, VolumeProcessor* pProcessor) :
 	ParameterDataBridge(pParam)
 {

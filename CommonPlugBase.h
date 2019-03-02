@@ -57,6 +57,7 @@ protected:
 
 	void AddOscillatorFrequencyBridge(int paramIndex, Oscillator* pProcessor);
 	void AddOscillatorWaveformBridge(int paramIndex, Oscillator* pProcessor);
+	void AddToneParamBridge(int paramIndex, ToneProcessor* pProcessor);
 	void AddVolumeParamBridge(int paramIndex, VolumeProcessor* pProcessor);
 
 	void AddParameters(std::vector<ParameterInfo>& paramList);

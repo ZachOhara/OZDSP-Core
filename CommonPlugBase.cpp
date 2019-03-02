@@ -104,6 +104,12 @@ void CommonPlugBase::AddOscillatorWaveformBridge(int paramIndex, Oscillator* pPr
 	AddParameterBridge(paramIndex, bridge);
 }
 
+void CommonPlugBase::AddToneParamBridge(int paramIndex, ToneProcessor* pProcessor)
+{
+	ParameterDataBridge* bridge = new ToneDataBridge(GetParam(paramIndex), pProcessor);
+	AddParameterBridge(paramIndex, bridge);
+}
+
 void CommonPlugBase::AddVolumeParamBridge(int paramIndex, VolumeProcessor* pProcessor)
 {
 	ParameterDataBridge* bridge = new VolumeDataBridge(GetParam(paramIndex), pProcessor);
