@@ -4,6 +4,7 @@
 #include "IPlug_include_in_plug_hdr.h"
 
 #include "ParameterInfo.h"
+#include "ParameterValueLabel.h"
 
 #include <map>
 #include <string>
@@ -36,7 +37,7 @@ public:
 	~CommonPlugBase();
 
 	virtual void Reset() override;
-	virtual void OnParamChange(int paramIdx) override;
+	virtual void OnParamChange(int paramIndex) override;
 	
 	virtual void ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames) = 0;
 
@@ -57,10 +58,14 @@ private:
 	IGraphics* mpGraphics;
 
 	std::map<int, IBitmap> mBitmapRegistry;
+	std::map<int, ParameterValueLabel*> mLabelRegistry;
 
 	void AddSelectionParameter(ParameterInfo& param, IParam* pParamObj, IBitmap& bitmap);
 	void AddNumericParameter(ParameterInfo& param, IParam* pParamObj, IBitmap& bitmap);
 	void AddParameterLabel(ParameterInfo& param, IParam* pParamObj, IBitmap& bitmap);
+
+	static IRECT ConstructLabelRect(ParameterInfo& param, IBitmap& bitmap);
+	static IRECT ConstructEditingRect(ParameterInfo& param, IRECT& labelRect);
 };
 
 #endif // !__COMMON_PLUG_BASE__

@@ -16,7 +16,9 @@ ParameterInfo& ParameterInfo::MakeFrequencyParam()
 	static const double step_hz = 0.01;
 	return (*this)
 		.InitNumericParam(default_hz, min_hz, max_hz, step_hz, "Hz")
-		.SetValueShapeFactor(3.0);
+		.SetValueShapeFactor(3.0)
+		.SetLabelEditWidth(80)
+		.SetLabelEditChars(8);
 }
 
 ParameterInfo& ParameterInfo::MakeVolumeReductionParam()
@@ -76,6 +78,18 @@ ParameterInfo& ParameterInfo::InitLabel()
 ParameterInfo& ParameterInfo::SetValueShapeFactor(double weightFactor)
 {
 	mValueShapeFactor = weightFactor;
+	return *this;
+}
+
+ParameterInfo& ParameterInfo::SetLabelEditWidth(int editWidth)
+{
+	mLabelEditWidth = editWidth;
+	return *this;
+}
+
+ParameterInfo& ParameterInfo::SetLabelEditChars(int editChars)
+{
+	mLabelEditChars = editChars;
 	return *this;
 }
 
@@ -162,4 +176,39 @@ std::string& ParameterInfo::UnitLabel()
 double ParameterInfo::ValueShapeFactor()
 {
 	return mValueShapeFactor;
+}
+
+bool ParameterInfo::IsParamLabeled()
+{
+	return mIsParamLabeled;
+}
+
+int ParameterInfo::LabelVerticalBuffer()
+{
+	return mLabelVerticalBuffer;
+}
+
+int ParameterInfo::LabelWidthBuffer()
+{
+	return mLabelWidthBuffer;
+}
+
+int ParameterInfo::LabelHeight()
+{
+	return mLabelHeight;
+}
+
+int ParameterInfo::LabelEditWidth()
+{
+	return mLabelEditWidth;
+}
+
+int ParameterInfo::LabelEditChars()
+{
+	return mLabelEditChars;
+}
+
+int ParameterInfo::LabelFontSize()
+{
+	return mLabelFontSize;
 }

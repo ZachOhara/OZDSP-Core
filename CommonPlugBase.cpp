@@ -48,9 +48,16 @@ void CommonPlugBase::Reset()
 	IMutexLock lock(this);
 }
 
-void CommonPlugBase::OnParamChange(int paramIdx)
+void CommonPlugBase::OnParamChange(int paramIndex)
 {
 	IMutexLock lock(this);
+
+	auto search = mLabelRegistry.find(paramIndex);
+	if (search != mLabelRegistry.end())
+	{
+		ParameterValueLabel* label = search->second;
+		label->UpdateDisplay();
+	}
 }
 
 void CommonPlugBase::CreatePresets()
@@ -117,7 +124,10 @@ void CommonPlugBase::AddParameter(ParameterInfo& param)
 			AddNumericParameter(param, pParamObj, bitmap);
 		}
 
-		// TODO: if param has a label, do stuff here
+		if (param.IsParamLabeled())
+		{
+			AddParameterLabel(param, pParamObj, bitmap);
+		}
 	}
 }
 
@@ -162,5 +172,37 @@ void CommonPlugBase::AddNumericParameter(ParameterInfo& param, IParam* pParamObj
 
 void CommonPlugBase::AddParameterLabel(ParameterInfo& param, IParam* pParamObj, IBitmap& bitmap)
 {
-	// big TODO
+	IRECT labelRect = ConstructLabelRect(param, bitmap);
+	IRECT editingRect = ConstructEditingRect(param, labelRect);
+	ParameterValueLabel* label = new ParameterValueLabel(this, param.ParamIndex(),
+		labelRect, editingRect, param.LabelFontSize());
+	label->SetTextEntryLength(param.LabelEditChars());
+	mLabelRegistry[param.ParamIndex()] = label;
+	GetGraphics()->AttachControl(label);
+}
+
+IRECT CommonPlugBase::ConstructLabelRect(ParameterInfo& param, IBitmap& bitmap)
+{
+	int controlX = param.PosX();
+	int controlY = param.PosY();
+	int controlWidth = bitmap.frameWidth();
+	int controlHeight = bitmap.frameHeight();
+
+	int sideBuffer = param.LabelWidthBuffer() / 2;
+
+	int rectLeft = controlX - sideBuffer;
+	int rectRight = controlX + controlWidth + sideBuffer;
+
+	int rectTop = controlY + controlHeight + param.LabelVerticalBuffer();
+	int rectBottom = rectTop + param.LabelHeight();
+
+	return IRECT(rectLeft, rectTop, rectRight, rectBottom);
+}
+
+IRECT CommonPlugBase::ConstructEditingRect(ParameterInfo& param, IRECT& labelRect)
+{
+	int width = labelRect.R - labelRect.L;
+	int sideDifference = (width - param.LabelEditWidth()) / 2;
+	return IRECT(labelRect.L + sideDifference, labelRect.T,
+		labelRect.R - sideDifference, labelRect.B);
 }
