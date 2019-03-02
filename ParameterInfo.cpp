@@ -29,7 +29,8 @@ ParameterInfo& ParameterInfo::MakeVolumeReductionParam()
 	static const double step_db = 0.1;
 	return (*this)
 		.InitNumericParam(default_db, min_db, max_db, step_db, "dB")
-		.SetValueShapeFactor(0.2);
+		.SetValueShapeFactor(0.2)
+		.AddSpecialDisplayValue(-100, "-oo dB");
 }
 
 ParameterInfo& ParameterInfo::MakeWaveformParam()
@@ -78,6 +79,12 @@ ParameterInfo& ParameterInfo::InitLabel()
 ParameterInfo& ParameterInfo::SetValueShapeFactor(double weightFactor)
 {
 	mValueShapeFactor = weightFactor;
+	return *this;
+}
+
+ParameterInfo & ParameterInfo::AddSpecialDisplayValue(int value, std::string display)
+{
+	mSpecialDisplayValues.push_back(std::pair<int, std::string>(value, display));
 	return *this;
 }
 
@@ -176,6 +183,11 @@ std::string& ParameterInfo::UnitLabel()
 double ParameterInfo::ValueShapeFactor()
 {
 	return mValueShapeFactor;
+}
+
+std::vector<std::pair<int, std::string>>& ParameterInfo::SpecialDisplayValues()
+{
+	return mSpecialDisplayValues;
 }
 
 bool ParameterInfo::IsParamLabeled()

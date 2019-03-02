@@ -165,6 +165,15 @@ void CommonPlugBase::AddNumericParameter(ParameterInfo& param, IParam* pParamObj
 	pParamObj->SetShape(
 		param.ValueShapeFactor());
 
+	// Add special values
+	std::vector<std::pair<int, std::string>>& specialValues = param.SpecialDisplayValues();
+	for (auto iterator = specialValues.begin(); iterator != specialValues.end(); ++iterator)
+	{
+		int value = iterator->first;
+		std::string& display = iterator->second;
+		pParamObj->SetDisplayText(value, display.c_str());
+	}
+
 	// Initialize graphics
 	GetGraphics()->AttachControl(new IKnobMultiControl(
 		this, param.PosX(), param.PosY(), param.ParamIndex(), &bitmap));

@@ -26,6 +26,7 @@ public:
 
 	// Setters for specific settings
 	ParameterInfo& SetValueShapeFactor(double weightFactor);
+	ParameterInfo& AddSpecialDisplayValue(int value, std::string display);
 	ParameterInfo& SetLabelEditWidth(int editWidth);
 	ParameterInfo& SetLabelEditChars(int editChars);
 
@@ -51,6 +52,7 @@ public:
 	double ValueStep();
 	std::string& UnitLabel();
 	double ValueShapeFactor();
+	std::vector<std::pair<int, std::string>>& SpecialDisplayValues();
 
 	// Accessors for label data
 	bool IsParamLabeled();
@@ -85,6 +87,7 @@ private:
 	double mValueStep;
 	std::string mUnitLabel;
 	double mValueShapeFactor = 1.0;
+	std::vector<std::pair<int, std::string>> mSpecialDisplayValues;
 
 	// Data for parameters with labels
 	bool mIsParamLabeled = false;
