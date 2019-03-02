@@ -4,8 +4,13 @@
 #include "IPlug_include_in_plug_hdr.h"
 #include "resource.h"
 
+#include "parameter/ParameterDataBridge.h"
 #include "parameter/ParameterInfo.h"
 #include "parameter/ParameterValueLabel.h"
+
+#include "processing/Oscillator.h"
+#include "processing/ToneProcessor.h"
+#include "processing/VolumeProcessor.h"
 
 #include <map>
 #include <string>
@@ -50,16 +55,25 @@ protected:
 	void SetBackground(int id, std::string name);
 	void RegisterBitmap(int id, std::string name, int nFrames);
 
-	void ForceUpdateParameters();
-	void FinishConstruction();
+	void AddOscillatorFrequencyBridge(int paramIndex, Oscillator* pProcessor);
+	void AddOscillatorWaveformBridge(int paramIndex, Oscillator* pProcessor);
+	void AddVolumeParamBridge(int paramIndex, VolumeProcessor* pProcessor);
+
 	void AddParameters(std::vector<ParameterInfo>& paramList);
 	void AddParameter(ParameterInfo& param);
+
+	void ForceUpdateParameters();
+	void FinishConstruction();
 	
 private:
 	IGraphics* mpGraphics;
 
 	std::map<int, IBitmap> mBitmapRegistry;
 	std::map<int, ParameterValueLabel*> mLabelRegistry;
+
+	std::vector<std::pair<int, ParameterDataBridge*>> mDataBridgeList;
+
+	void AddParameterBridge(int paramIndex, ParameterDataBridge* pBridge);
 
 	void AddSelectionParameter(ParameterInfo& param, IParam* pParamObj, IBitmap& bitmap);
 	void AddNumericParameter(ParameterInfo& param, IParam* pParamObj, IBitmap& bitmap);

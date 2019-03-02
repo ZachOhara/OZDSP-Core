@@ -52,6 +52,17 @@ void CommonPlugBase::OnParamChange(int paramIndex)
 {
 	IMutexLock lock(this);
 
+	// Update data bridges
+	int nBridges = mDataBridgeList.size();
+	for (int i = 0; i < nBridges; i++)
+	{
+		if (paramIndex == mDataBridgeList[i].first)
+		{
+			mDataBridgeList[i].second->HandleUpdate();
+		}
+	}
+
+	// Update displays
 	auto search = mLabelRegistry.find(paramIndex);
 	if (search != mLabelRegistry.end())
 	{
@@ -81,20 +92,22 @@ void CommonPlugBase::RegisterBitmap(int id, std::string name, int nFrames)
 	mBitmapRegistry[id] = bitmap;
 }
 
-void CommonPlugBase::ForceUpdateParameters()
+void CommonPlugBase::AddOscillatorFrequencyBridge(int paramIndex, Oscillator* pProcessor)
 {
-	int nParams = NParams();
-	for (int i = 0; i < nParams; i++)
-	{
-		OnParamChange(i);
-	}
+	ParameterDataBridge* bridge = new OscillatorFrequencyDataBridge(GetParam(paramIndex), pProcessor);
+	AddParameterBridge(paramIndex, bridge);
 }
 
-void CommonPlugBase::FinishConstruction()
+void CommonPlugBase::AddOscillatorWaveformBridge(int paramIndex, Oscillator* pProcessor)
 {
-	AttachGraphics(GetGraphics());
-	CreatePresets();
-	ForceUpdateParameters();
+	ParameterDataBridge* bridge = new OscillatorWaveformDataBridge(GetParam(paramIndex), pProcessor);
+	AddParameterBridge(paramIndex, bridge);
+}
+
+void CommonPlugBase::AddVolumeParamBridge(int paramIndex, VolumeProcessor* pProcessor)
+{
+	ParameterDataBridge* bridge = new VolumeDataBridge(GetParam(paramIndex), pProcessor);
+	AddParameterBridge(paramIndex, bridge);
 }
 
 void CommonPlugBase::AddParameters(std::vector<ParameterInfo>& paramList)
@@ -129,6 +142,27 @@ void CommonPlugBase::AddParameter(ParameterInfo& param)
 			AddParameterLabel(param, pParamObj, bitmap);
 		}
 	}
+}
+
+void CommonPlugBase::ForceUpdateParameters()
+{
+	int nParams = NParams();
+	for (int i = 0; i < nParams; i++)
+	{
+		OnParamChange(i);
+	}
+}
+
+void CommonPlugBase::FinishConstruction()
+{
+	AttachGraphics(GetGraphics());
+	CreatePresets();
+	ForceUpdateParameters();
+}
+
+void CommonPlugBase::AddParameterBridge(int paramIndex, ParameterDataBridge* pBridge)
+{
+	mDataBridgeList.push_back(std::pair<int, ParameterDataBridge*>(paramIndex, pBridge));
 }
 
 void CommonPlugBase::AddSelectionParameter(ParameterInfo& param, IParam* pParamObj, IBitmap& bitmap)
