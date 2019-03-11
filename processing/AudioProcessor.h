@@ -3,6 +3,8 @@
 
 #include "IPlug_include_in_plug_hdr.h"
 
+#include <vector>
+
 class AudioProcessor
 {
 public:
