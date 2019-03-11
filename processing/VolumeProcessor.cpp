@@ -1,6 +1,7 @@
 #include "VolumeProcessor.h"
 
-VolumeProcessor::VolumeProcessor():
+VolumeProcessor::VolumeProcessor(IPlugBase* pPlug):
+	AudioProcessor(pPlug, kNumVolumeProcessorParams),
 	mAmpFactor(1.0)
 {
 }
@@ -27,6 +28,40 @@ void VolumeProcessor::SetZero()
 void VolumeProcessor::SetAmpFactor(double ampFactor)
 {
 	mAmpFactor = ampFactor;
+}
+
+void VolumeProcessor::HandleParamChange(int paramType, double newValue, int newIntValue)
+{
+	switch (paramType)
+	{
+	case kVolumeProcessorDecibelsParam:
+		GetDecibelsFromParam(newValue);
+		break;
+	default:
+		break;
+	}
+}
+
+void VolumeProcessor::GetDecibelsFromParam(double paramValue)
+{
+	static const double threshold_db = -99.95;
+	IParam* pParam = GetParamObject(kVolumeProcessorDecibelsParam);
+	double minValue = pParam->GetMin();
+
+	// If the value is below the threshold, just set it to the minimum
+	if (paramValue <= threshold_db && paramValue != minValue)
+	{
+		pParam->Set(minValue);
+	}
+	// Now update the processor
+	if (paramValue != minValue)
+	{
+		SetDecibels(paramValue);
+	}
+	else
+	{
+		SetZero();
+	}
 }
 
 double GetAmpFactor(double decibels)

@@ -1,10 +1,11 @@
 #ifndef __OSCILLATOR_H__
 #define __OSCILLATOR_H__
 
-#include <cmath>
+#include "IPlug_include_in_plug_hdr.h"
 
-//#include "AudioProcessor.h"
-#include "../CommonPlugBase.h"
+#include "AudioProcessor.h"
+
+#include <cmath>
 
 #define M_PI 3.14159265358979323846
 
@@ -22,10 +23,10 @@ enum OscillatorMode {
 	kNumOscillatorModes
 };
 
-class Oscillator// : public AudioProcessor
+class Oscillator : public AudioProcessor
 {
 public:
-	Oscillator(CommonPlugBase* pPlug);
+	Oscillator(IPlugBase* pPlug);
 	~Oscillator();
 
 	double GetNextSample();
@@ -33,17 +34,13 @@ public:
 	void SetMode(int newMode);
 	void SetFrequency(double frequency);
 
-	// todo remove
-	void SetSampleRate(double sampleRate);
-
 protected:
-	//void HandleParamChange(int paramType) override;
+	void HandleParamChange(int paramType, double newValue, int newIntValue) override;
+	void HandleHostReset() override;
 
 private:
 	int mOscillatorMode;
-
 	double mFrequency;
-	double mSampleRate;
 
 	double mPhasePosition;
 	double mPhaseIncrement;

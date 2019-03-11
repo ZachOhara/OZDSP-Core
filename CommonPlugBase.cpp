@@ -46,6 +46,15 @@ void CommonPlugBase::Reset()
 {
 	TRACE;
 	IMutexLock lock(this);
+
+	// Reset processors
+	double sampleRate = GetSampleRate();
+	int nProcessors = mProcessorRegistry.size();
+	for (int i = 0; i < nProcessors; i++)
+	{
+		mProcessorRegistry[i]->SetSampleRate(sampleRate);
+		mProcessorRegistry[i]->Reset();
+	}
 }
 
 void CommonPlugBase::OnParamChange(int paramIndex)
@@ -53,23 +62,12 @@ void CommonPlugBase::OnParamChange(int paramIndex)
 	IMutexLock lock(this);
 
 	// Update processors
-	int nBridges = mParamRegistry.size();
+	int nBridges = mParameterRegistry.size();
 	for (int i = 0; i < nBridges; i++)
 	{
-		if (paramIndex == mParamRegistry[i].first)
+		if (paramIndex == mParameterRegistry[i].first)
 		{
-			mParamRegistry[i].second->UpdateParam(paramIndex);
-		}
-	}
-
-	// Update data bridges
-	//int nBridges = mDataBridgeList.size();
-	nBridges = mDataBridgeList.size();
-	for (int i = 0; i < nBridges; i++)
-	{
-		if (paramIndex == mDataBridgeList[i].first)
-		{
-			mDataBridgeList[i].second->HandleUpdate();
+			mParameterRegistry[i].second->UpdateParam(paramIndex);
 		}
 	}
 
@@ -84,7 +82,8 @@ void CommonPlugBase::OnParamChange(int paramIndex)
 
 void CommonPlugBase::CreatePresets()
 {
-
+	// By default, do nothing
+	// This method should be overriden when presets are implemented
 }
 
 IGraphics* CommonPlugBase::GetGraphics()
@@ -103,38 +102,6 @@ void CommonPlugBase::RegisterBitmap(int id, std::string name, int nFrames)
 	mBitmapRegistry[id] = bitmap;
 }
 
-/*
-void CommonPlugBase::RegisterParam(AudioProcessor* pProcessor, int paramIndex, int paramType)
-{
-	mParamRegistry.push_back(std::pair<int, AudioProcessor*>(paramIndex, pProcessor));
-	pProcessor->RegisterParameter(paramIndex, paramType);
-}
-*/
-
-void CommonPlugBase::AddOscillatorFrequencyBridge(int paramIndex, Oscillator* pProcessor)
-{
-	ParameterDataBridge* bridge = new OscillatorFrequencyDataBridge(GetParam(paramIndex), pProcessor);
-	AddParameterBridge(paramIndex, bridge);
-}
-
-void CommonPlugBase::AddOscillatorWaveformBridge(int paramIndex, Oscillator* pProcessor)
-{
-	ParameterDataBridge* bridge = new OscillatorWaveformDataBridge(GetParam(paramIndex), pProcessor);
-	AddParameterBridge(paramIndex, bridge);
-}
-
-void CommonPlugBase::AddToneParamBridge(int paramIndex, ToneProcessor* pProcessor)
-{
-	ParameterDataBridge* bridge = new ToneDataBridge(GetParam(paramIndex), pProcessor);
-	AddParameterBridge(paramIndex, bridge);
-}
-
-void CommonPlugBase::AddVolumeParamBridge(int paramIndex, VolumeProcessor* pProcessor)
-{
-	ParameterDataBridge* bridge = new VolumeDataBridge(GetParam(paramIndex), pProcessor);
-	AddParameterBridge(paramIndex, bridge);
-}
-
 void CommonPlugBase::AddParameters(std::vector<ParameterInfo>& paramList)
 {
 	int nParams = paramList.size();
@@ -142,6 +109,24 @@ void CommonPlugBase::AddParameters(std::vector<ParameterInfo>& paramList)
 	{
 		AddParameter(paramList[i]);
 	}
+}
+
+void CommonPlugBase::RegisterProcessor(AudioProcessor* pProcessor)
+{
+	mProcessorRegistry.push_back(pProcessor);
+}
+
+void CommonPlugBase::RegisterProcessorParameter(AudioProcessor* pProcessor, int paramIndex, int paramType)
+{
+	mParameterRegistry.push_back(std::pair<int, AudioProcessor*>(paramIndex, pProcessor));
+	pProcessor->RegisterProcessorParameter(paramIndex, paramType);
+}
+
+void CommonPlugBase::FinishConstruction()
+{
+	AttachGraphics(GetGraphics());
+	CreatePresets();
+	ForceUpdateParameters();
 }
 
 void CommonPlugBase::AddParameter(ParameterInfo& param)
@@ -167,27 +152,6 @@ void CommonPlugBase::AddParameter(ParameterInfo& param)
 			AddParameterLabel(param, pParamObj, bitmap);
 		}
 	}
-}
-
-void CommonPlugBase::ForceUpdateParameters()
-{
-	int nParams = NParams();
-	for (int i = 0; i < nParams; i++)
-	{
-		OnParamChange(i);
-	}
-}
-
-void CommonPlugBase::FinishConstruction()
-{
-	AttachGraphics(GetGraphics());
-	CreatePresets();
-	ForceUpdateParameters();
-}
-
-void CommonPlugBase::AddParameterBridge(int paramIndex, ParameterDataBridge* pBridge)
-{
-	mDataBridgeList.push_back(std::pair<int, ParameterDataBridge*>(paramIndex, pBridge));
 }
 
 void CommonPlugBase::AddSelectionParameter(ParameterInfo& param, IParam* pParamObj, IBitmap& bitmap)
@@ -247,6 +211,15 @@ void CommonPlugBase::AddParameterLabel(ParameterInfo& param, IParam* pParamObj, 
 	label->SetTextEntryLength(param.LabelEditChars());
 	mLabelRegistry[param.ParamIndex()] = label;
 	GetGraphics()->AttachControl(label);
+}
+
+void CommonPlugBase::ForceUpdateParameters()
+{
+	int nParams = NParams();
+	for (int i = 0; i < nParams; i++)
+	{
+		OnParamChange(i);
+	}
 }
 
 IRECT CommonPlugBase::ConstructLabelRect(ParameterInfo& param, IBitmap& bitmap)

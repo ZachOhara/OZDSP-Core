@@ -3,16 +3,9 @@
 
 #include "IPlug_include_in_plug_hdr.h"
 
-#include "parameter/ParameterDataBridge.h"
 #include "parameter/ParameterInfo.h"
 #include "parameter/ParameterValueLabel.h"
-
-// #include "processing/AudioProcessor.h"
-// TODO remove these three
-#include "processing/Oscillator.h"
-#include "processing/ToneProcessor.h"
-#include "processing/VolumeProcessor.h"
-
+#include "processing/AudioProcessor.h"
 
 #include <map>
 #include <string>
@@ -50,24 +43,23 @@ public:
 	virtual void ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames) = 0;
 
 protected:
+	// For a subclass to override
 	virtual void CreatePresets();
 
+	// Graphics-related methods
 	IGraphics* GetGraphics();
 
 	void SetBackground(int id, std::string name);
 	void RegisterBitmap(int id, std::string name, int nFrames);
 
-	//void RegisterParam(AudioProcessor* pProcessor, int paramIndex, int paramType);
-
-	void AddOscillatorFrequencyBridge(int paramIndex, Oscillator* pProcessor);
-	void AddOscillatorWaveformBridge(int paramIndex, Oscillator* pProcessor);
-	void AddToneParamBridge(int paramIndex, ToneProcessor* pProcessor);
-	void AddVolumeParamBridge(int paramIndex, VolumeProcessor* pProcessor);
-
+	// Parameter system
 	void AddParameters(std::vector<ParameterInfo>& paramList);
-	void AddParameter(ParameterInfo& param);
 
-	void ForceUpdateParameters();
+	// Processor system
+	void RegisterProcessor(AudioProcessor* pProcessor);
+	void RegisterProcessorParameter(AudioProcessor* pProcessor, int paramIndex, int paramType);
+
+	// Called by subclass at end of construction
 	void FinishConstruction();
 	
 private:
@@ -76,15 +68,15 @@ private:
 	std::map<int, IBitmap> mBitmapRegistry;
 	std::map<int, ParameterValueLabel*> mLabelRegistry;
 
-	std::vector<std::pair<int, AudioProcessor*>> mParamRegistry;
+	std::vector<AudioProcessor*> mProcessorRegistry;
+	std::vector<std::pair<int, AudioProcessor*>> mParameterRegistry;
 
-	std::vector<std::pair<int, ParameterDataBridge*>> mDataBridgeList;
-
-	void AddParameterBridge(int paramIndex, ParameterDataBridge* pBridge);
-
+	void AddParameter(ParameterInfo& param);
 	void AddSelectionParameter(ParameterInfo& param, IParam* pParamObj, IBitmap& bitmap);
 	void AddNumericParameter(ParameterInfo& param, IParam* pParamObj, IBitmap& bitmap);
 	void AddParameterLabel(ParameterInfo& param, IParam* pParamObj, IBitmap& bitmap);
+
+	void ForceUpdateParameters();
 
 	static IRECT ConstructLabelRect(ParameterInfo& param, IBitmap& bitmap);
 	static IRECT ConstructEditingRect(ParameterInfo& param, IRECT& labelRect);

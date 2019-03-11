@@ -1,7 +1,7 @@
 #include "Oscillator.h"
 
-Oscillator::Oscillator(CommonPlugBase* pPlug) :
-	//AudioProcessor(pPlug, kNumOscillatorParams),
+Oscillator::Oscillator(IPlugBase* pPlug) :
+	AudioProcessor(pPlug, kNumOscillatorParams),
 	mOscillatorMode(kModeSine),
 	mPhasePosition(0)
 {
@@ -68,34 +68,30 @@ void Oscillator::SetFrequency(double frequency)
 	UpdatePhaseIncrement();
 }
 
-///*
-void Oscillator::SetSampleRate(double sampleRate)
-{
-mSampleRate = sampleRate;
-UpdatePhaseIncrement();
-}
-//*/
-
-/*
-void Oscillator::HandleParamChange(int paramType)
+void Oscillator::HandleParamChange(int paramType, double newValue, int newIntValue)
 {
 	switch (paramType)
 	{
 	case kOscillatorFrequencyParam:
-		SetFrequency(GetParamValue(kOscillatorFrequencyParam));
+		SetFrequency(newValue);
 		break;
 	case kOscillatorModeParam:
-		SetMode(GetParamInt(kOscillatorModeParam));
+		SetMode(newIntValue);
 		break;
 	default:
 		break;
 	}
 }
-*/
+
+void Oscillator::HandleHostReset()
+{
+	mPhasePosition = 0.0;
+	UpdatePhaseIncrement();
+}
 
 void Oscillator::UpdatePhaseIncrement()
 {
-	// don't update phase position, because we actually want phase to be conserved if the frequency changes
-	// that way we won't hear a nasty clip as the phase resets
-	mPhaseIncrement = mFrequency / mSampleRate; // GetSampleRate();
+	// Don't update phase position, because we want phase to be conserved if the frequency changes
+	// That way we won't hear a nasty clip as the phase resets
+	mPhaseIncrement = mFrequency / GetSampleRate();
 }
