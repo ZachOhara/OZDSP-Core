@@ -2,15 +2,17 @@
 #define __COMMON_PLUG_BASE_H__
 
 #include "IPlug_include_in_plug_hdr.h"
-#include "resource.h"
 
 #include "parameter/ParameterDataBridge.h"
 #include "parameter/ParameterInfo.h"
 #include "parameter/ParameterValueLabel.h"
 
+// #include "processing/AudioProcessor.h"
+// TODO remove these three
 #include "processing/Oscillator.h"
 #include "processing/ToneProcessor.h"
 #include "processing/VolumeProcessor.h"
+
 
 #include <map>
 #include <string>
@@ -55,6 +57,8 @@ protected:
 	void SetBackground(int id, std::string name);
 	void RegisterBitmap(int id, std::string name, int nFrames);
 
+	//void RegisterParam(AudioProcessor* pProcessor, int paramIndex, int paramType);
+
 	void AddOscillatorFrequencyBridge(int paramIndex, Oscillator* pProcessor);
 	void AddOscillatorWaveformBridge(int paramIndex, Oscillator* pProcessor);
 	void AddToneParamBridge(int paramIndex, ToneProcessor* pProcessor);
@@ -71,6 +75,8 @@ private:
 
 	std::map<int, IBitmap> mBitmapRegistry;
 	std::map<int, ParameterValueLabel*> mLabelRegistry;
+
+	std::vector<std::pair<int, AudioProcessor*>> mParamRegistry;
 
 	std::vector<std::pair<int, ParameterDataBridge*>> mDataBridgeList;
 

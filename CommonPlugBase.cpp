@@ -52,8 +52,19 @@ void CommonPlugBase::OnParamChange(int paramIndex)
 {
 	IMutexLock lock(this);
 
+	// Update processors
+	int nBridges = mParamRegistry.size();
+	for (int i = 0; i < nBridges; i++)
+	{
+		if (paramIndex == mParamRegistry[i].first)
+		{
+			mParamRegistry[i].second->UpdateParam(paramIndex);
+		}
+	}
+
 	// Update data bridges
-	int nBridges = mDataBridgeList.size();
+	//int nBridges = mDataBridgeList.size();
+	nBridges = mDataBridgeList.size();
 	for (int i = 0; i < nBridges; i++)
 	{
 		if (paramIndex == mDataBridgeList[i].first)
@@ -91,6 +102,14 @@ void CommonPlugBase::RegisterBitmap(int id, std::string name, int nFrames)
 	IBitmap& bitmap = GetGraphics()->LoadIBitmap(id, name.c_str(), nFrames);
 	mBitmapRegistry[id] = bitmap;
 }
+
+/*
+void CommonPlugBase::RegisterParam(AudioProcessor* pProcessor, int paramIndex, int paramType)
+{
+	mParamRegistry.push_back(std::pair<int, AudioProcessor*>(paramIndex, pProcessor));
+	pProcessor->RegisterParameter(paramIndex, paramType);
+}
+*/
 
 void CommonPlugBase::AddOscillatorFrequencyBridge(int paramIndex, Oscillator* pProcessor)
 {

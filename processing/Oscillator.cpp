@@ -1,6 +1,7 @@
 #include "Oscillator.h"
 
-Oscillator::Oscillator() :
+Oscillator::Oscillator(CommonPlugBase* pPlug) :
+	//AudioProcessor(pPlug, kNumOscillatorParams),
 	mOscillatorMode(kModeSine),
 	mPhasePosition(0)
 {
@@ -8,23 +9,6 @@ Oscillator::Oscillator() :
 
 Oscillator::~Oscillator()
 {
-}
-
-void Oscillator::SetMode(int newMode)
-{
-	mOscillatorMode = newMode;
-}
-
-void Oscillator::SetFrequency(double frequency)
-{
-	mFrequency = frequency;
-	UpdatePhaseIncrement();
-}
-
-void Oscillator::SetSampleRate(double sampleRate)
-{
-	mSampleRate = sampleRate;
-	UpdatePhaseIncrement();
 }
 
 double Oscillator::GetNextSample()
@@ -73,9 +57,45 @@ double Oscillator::GetNextSample()
 	return sampleValue;
 }
 
+void Oscillator::SetMode(int newMode)
+{
+	mOscillatorMode = newMode;
+}
+
+void Oscillator::SetFrequency(double frequency)
+{
+	mFrequency = frequency;
+	UpdatePhaseIncrement();
+}
+
+///*
+void Oscillator::SetSampleRate(double sampleRate)
+{
+mSampleRate = sampleRate;
+UpdatePhaseIncrement();
+}
+//*/
+
+/*
+void Oscillator::HandleParamChange(int paramType)
+{
+	switch (paramType)
+	{
+	case kOscillatorFrequencyParam:
+		SetFrequency(GetParamValue(kOscillatorFrequencyParam));
+		break;
+	case kOscillatorModeParam:
+		SetMode(GetParamInt(kOscillatorModeParam));
+		break;
+	default:
+		break;
+	}
+}
+*/
+
 void Oscillator::UpdatePhaseIncrement()
 {
 	// don't update phase position, because we actually want phase to be conserved if the frequency changes
 	// that way we won't hear a nasty clip as the phase resets
-	mPhaseIncrement = mFrequency / mSampleRate;
+	mPhaseIncrement = mFrequency / mSampleRate; // GetSampleRate();
 }

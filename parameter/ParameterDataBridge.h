@@ -7,6 +7,14 @@
 #include "../processing/ToneProcessor.h"
 #include "../processing/VolumeProcessor.h"
 
+enum CommonParameterBridgeTypes
+{
+	kOscillatorFrequencyBridge,
+	kOscillatorWaveformBridge,
+	kTonePercentBridge,
+	kVolumeBridge,
+};
+
 class ParameterDataBridge
 {
 public:

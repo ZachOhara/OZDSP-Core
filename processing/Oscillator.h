@@ -3,7 +3,16 @@
 
 #include <cmath>
 
+//#include "AudioProcessor.h"
+#include "../CommonPlugBase.h"
+
 #define M_PI 3.14159265358979323846
+
+enum OscillatorParameters {
+	kOscillatorFrequencyParam,
+	kOscillatorModeParam,
+	kNumOscillatorParams,
+};
 
 enum OscillatorMode {
 	kModeSine,
@@ -13,17 +22,22 @@ enum OscillatorMode {
 	kNumOscillatorModes
 };
 
-class Oscillator
+class Oscillator// : public AudioProcessor
 {
 public:
-	Oscillator();
+	Oscillator(CommonPlugBase* pPlug);
 	~Oscillator();
+
+	double GetNextSample();
 
 	void SetMode(int newMode);
 	void SetFrequency(double frequency);
+
+	// todo remove
 	void SetSampleRate(double sampleRate);
 
-	double GetNextSample();
+protected:
+	//void HandleParamChange(int paramType) override;
 
 private:
 	int mOscillatorMode;
