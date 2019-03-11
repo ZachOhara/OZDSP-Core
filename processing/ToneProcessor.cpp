@@ -1,6 +1,7 @@
 #include "ToneProcessor.h"
 
-ToneProcessor::ToneProcessor() :
+ToneProcessor::ToneProcessor(IPlugBase* pPlug) :
+	AudioProcessor(pPlug, kNumToneProcessorParams),
 	mMixFactor(1.0)
 {
 }
@@ -22,4 +23,16 @@ void ToneProcessor::SetMixPercent(double mixPercent)
 void ToneProcessor::SetMixFactor(double mixFactor)
 {
 	mMixFactor = mixFactor;
+}
+
+void ToneProcessor::HandleParamChange(int paramType, double newValue, int newIntValue)
+{
+	switch (paramType)
+	{
+	case kToneProcessorMixPercentParam:
+		SetMixPercent(newValue);
+		break;
+	default:
+		break;
+	}
 }
