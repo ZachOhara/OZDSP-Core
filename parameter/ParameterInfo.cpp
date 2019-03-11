@@ -35,7 +35,7 @@ ParameterInfo& ParameterInfo::MakeVolumeReductionParam()
 	static const double step_db = 0.1;
 	return (*this)
 		.InitNumericParam(default_db, min_db, max_db, step_db, "dB")
-		.SetValueShapeFactor(0.2)
+		.SetValueShapeFactor(0.15) // chosen so 1/2 way is -10 dB (sounds good because log scale)
 		.AddSpecialDisplayValue(-100, "-oo dB");
 }
 
