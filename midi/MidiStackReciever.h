@@ -4,10 +4,10 @@
 #include "IPlug_include_in_plug_hdr.h"
 #include "IMidiQueue.h"
 
+#include "TuningProcessor.h"
+
 #include <stack>
 #include <queue>
-
-#define NUM_MIDI_NOTES 128
 
 enum NoteState
 {
