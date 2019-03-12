@@ -3,6 +3,7 @@
 Oscillator::Oscillator(IPlugBase* pPlug) :
 	AudioProcessor(pPlug, kNumOscillatorParams),
 	mOscillatorMode(kModeSine),
+	mFrequency(0),
 	mPhasePosition(0)
 {
 }

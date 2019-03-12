@@ -49,4 +49,3 @@ private:
 };
 
 #endif // !__OSCILLATOR_H__
-
