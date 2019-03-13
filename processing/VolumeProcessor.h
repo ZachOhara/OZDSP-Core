@@ -7,14 +7,14 @@
 
 #include <math.h>
 
-double GetAmpFactor(double decibels);
-double GetDecibels(double ampFactor);
+double DecibelsToAmpFactor(double decibels);
+double AmpFactorToDecibels(double ampFactor);
+double LoudnessToAmpFactor(double loudness);
 
 class VolumeProcessor : public AudioProcessor
 {
 public:
-
-	enum EParameters {kDecibelsParam, kNumParams};
+	enum EParameters {kDecibelsParam, kLoudnessParam, kNumParams};
 
 	VolumeProcessor(IPlugBase* pPlug);
 	~VolumeProcessor();
@@ -22,6 +22,7 @@ public:
 	double GetAdjustedSample(double sample);
 
 	void SetDecibels(double decibels);
+	void SetLoudness(double loudness);
 	void SetZero();
 	void SetAmpFactor(double ampFactor);
 
