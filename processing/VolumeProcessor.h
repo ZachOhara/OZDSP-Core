@@ -10,15 +10,12 @@
 double GetAmpFactor(double decibels);
 double GetDecibels(double ampFactor);
 
-enum VolumeProcessorParameters
-{
-	kVolumeProcessorDecibelsParam,
-	kNumVolumeProcessorParams,
-};
-
 class VolumeProcessor : public AudioProcessor
 {
 public:
+
+	enum EParameters {kDecibelsParam, kNumParams};
+
 	VolumeProcessor(IPlugBase* pPlug);
 	~VolumeProcessor();
 

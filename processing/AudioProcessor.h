@@ -8,7 +8,7 @@
 class AudioProcessor
 {
 public:
-	AudioProcessor(IPlugBase* pPlug, int nSupportedParams);
+	AudioProcessor(IPlugBase* pPlug, int nParams);
 	~AudioProcessor();
 
 	void UpdateParam(int paramIndex);
@@ -30,6 +30,8 @@ private:
 	std::vector<int> mParamIndicies;
 
 	double mSampleRate;
+
+	int LookupParamType(int paramIndex);
 };
 
 #endif // !__AUDIO_PROCESSOR__H__

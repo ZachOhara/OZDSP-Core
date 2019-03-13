@@ -1,13 +1,13 @@
 #include "TuningProcessor.h"
 
 TuningProcessor::TuningProcessor(IPlugBase* pPlug) :
-	AudioProcessor(pPlug, kNumTuningProcessorParams)
+	AudioProcessor(pPlug, kNumParams)
 {
-	InitEqualTemperament();
-	InitJustTemperament();
+	InitEqualTemperamentTunings();
+	InitJustTemperamentTunings();
 
-	SetTuningMode(kEqualTemperament);
-	SetKey(3); // C (three semitones above A)
+	SetTemperament(kEqualTemperament);
+	SetKey(3); // default to C
 }
 
 TuningProcessor::~TuningProcessor()
@@ -28,7 +28,7 @@ double TuningProcessor::GetFrequencyOfNote(int noteId)
 	
 }
 
-void TuningProcessor::SetTuningMode(int tuningMode)
+void TuningProcessor::SetTemperament(int tuningMode)
 {
 	mTuningMode = tuningMode;
 }
@@ -36,6 +36,7 @@ void TuningProcessor::SetTuningMode(int tuningMode)
 void TuningProcessor::SetKey(int key)
 {
 	mCurrentKey = key;
+	// Set the relative major (only applicable to minor keys)
 	mRelativeMajorKey = key + 3;
 	if (mRelativeMajorKey >= NUM_KEYS)
 	{
@@ -43,7 +44,7 @@ void TuningProcessor::SetKey(int key)
 	}
 }
 
-void TuningProcessor::InitEqualTemperament()
+void TuningProcessor::InitEqualTemperamentTunings()
 {
 	for (int i = 0; i < NUM_MIDI_NOTES; i++)
 	{
@@ -52,7 +53,7 @@ void TuningProcessor::InitEqualTemperament()
 	}
 }
 
-void TuningProcessor::InitJustTemperament()
+void TuningProcessor::InitJustTemperamentTunings()
 {
 	for (int key = 0; key < NUM_KEYS; key++)
 	{
@@ -71,8 +72,8 @@ void TuningProcessor::InitJustTemperament()
 		// Set the rest of the notes based on the center octave
 		for (int i = 0; i < NUM_MIDI_NOTES; i++)
 		{
-			//int semitonesFromHomeOctave = i - center_id;
-			int octaveOffset = std::floor(((double)i - center_id) / 12.0);
+			int semitoneOffset = i - center_id;
+			int octaveOffset = std::floor(((double)semitoneOffset) / 12.0);
 			justTemperamentTunings[key][i] = justTemperamentTunings[key][i - (octaveOffset * 12)] * std::pow(2, octaveOffset);
 		}
 	}

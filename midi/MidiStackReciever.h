@@ -9,23 +9,17 @@
 #include <stack>
 #include <queue>
 
-enum NoteState
+enum MidiNoteState
 {
 	kNoteInactive, // when a note is neither pressed nor pedaled
 	kNotePressed, // when the key is currently down
 	kNotePedaled, // when the note is sustained only via pedal
 };
 
-enum StatusChangeEventType
+struct MidiEvent
 {
-	kNoteTriggerEventType,
-	kNoteReleaseEventType,
-	kNoteChangeEventType,
-	// TODO pitchbend, modulation, aftertouch, etc.
-};
+	enum EMidiEventTypes {kNoteBegin, kNoteEnd, kNoteChange};
 
-struct NoteStatusEvent
-{
 	int eventType;
 	int noteId;
 	int newNoteId;
@@ -34,12 +28,14 @@ struct NoteStatusEvent
 class MidiStackReciever
 {
 public:
+	enum EMidiNoteStates {kInactive, kKeyPressed, kPedalSustained};
+
 	MidiStackReciever();
 	~MidiStackReciever();
 
 	void RecieveMessage(IMidiMsg* pMessage);
 	void FlushBlock(int nFrames);
-	void AdvanceSample(std::queue<NoteStatusEvent>* eventQueue);
+	void AdvanceSample(std::queue<MidiEvent>* eventQueue);
 
 private:
 	IMidiQueue mMidiQueue;

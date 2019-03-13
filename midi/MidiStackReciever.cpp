@@ -25,10 +25,12 @@ void MidiStackReciever::FlushBlock(int nFrames)
 	mSampleOffset = 0;
 }
 
-void MidiStackReciever::AdvanceSample(std::queue<NoteStatusEvent>* eventQueue)
+void MidiStackReciever::AdvanceSample(std::queue<MidiEvent>* eventQueue)
 {
-	// Search through the messages
+	// cache the current note
 	int lastSoundingNoteId = mNoteIdStack.top();
+
+	// search the messages
 	while (!mMidiQueue.Empty() && mMidiQueue.Peek()->mOffset <= mSampleOffset)
 	{
 		IMidiMsg* pMessage = mMidiQueue.Peek();
@@ -46,25 +48,26 @@ void MidiStackReciever::AdvanceSample(std::queue<NoteStatusEvent>* eventQueue)
 			break;
 		}
 	}
-	int newSoundingNoteId = mNoteIdStack.top();
 
 	// Find out what changed and queue it
+	int newSoundingNoteId = mNoteIdStack.top();
+
 	if (lastSoundingNoteId != newSoundingNoteId)
 	{
-		NoteStatusEvent statusEvent;
+		MidiEvent statusEvent;
 		if (lastSoundingNoteId == -1)
 		{
-			statusEvent.eventType = kNoteTriggerEventType;
+			statusEvent.eventType = MidiEvent::kNoteBegin;
 			statusEvent.noteId = newSoundingNoteId;
 		}
 		else if (newSoundingNoteId == -1)
 		{
-			statusEvent.eventType = kNoteReleaseEventType;
+			statusEvent.eventType = MidiEvent::kNoteEnd;
 			statusEvent.noteId = lastSoundingNoteId;
 		}
 		else
 		{
-			statusEvent.eventType = kNoteChangeEventType;
+			statusEvent.eventType = MidiEvent::kNoteChange;
 			statusEvent.noteId = lastSoundingNoteId;
 			statusEvent.newNoteId = newSoundingNoteId;
 		}

@@ -8,29 +8,18 @@
 #define NUM_MIDI_NOTES 128
 #define NUM_KEYS 12
 
-enum TuningProcessorParameters
-{
-	kTuningProcessorTemperamentParam,
-	kTuningProcessorKeyParam,
-	kNumTuningProcessorParams,
-};
-
-enum TuningMode
-{
-	kEqualTemperament,
-	kJustTemperamentMajor,
-	kJustTemperamentMinor,
-};
-
 class TuningProcessor : public AudioProcessor
 {
 public:
+	enum EParameters {kTemperamentParam, kKeyParam, kNumParams};
+	enum ETemperaments {kEqualTemperament, kJustTemperamentMajor, kJustTemperamentMinor};
+
 	TuningProcessor(IPlugBase* pPlug);
 	~TuningProcessor();
 
 	double GetFrequencyOfNote(int noteId);
 
-	void SetTuningMode(int tuningMode);
+	void SetTemperament(int temperament);
 	void SetKey(int key);
 
 private:
@@ -49,8 +38,8 @@ private:
 	int mCurrentKey;
 	int mRelativeMajorKey;
 
-	void InitEqualTemperament();
-	void InitJustTemperament();
+	void InitEqualTemperamentTunings();
+	void InitJustTemperamentTunings();
 };
 
 #endif // !__TUNING_PROCESSOR_H__

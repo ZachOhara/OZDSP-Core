@@ -1,21 +1,17 @@
-#ifndef __TONE_PROCESSOR_H__
-#define __TONE_PROCESSOR_H__
+#ifndef __TONE_MIX_PROCESSOR_H__
+#define __TONE_MIX_PROCESSOR_H__
 
 #include "IPlug_include_in_plug_hdr.h"
 
 #include "AudioProcessor.h"
 
-enum ToneProcessorParameters
-{
-	kToneProcessorMixPercentParam,
-	kNumToneProcessorParams
-};
-
-class ToneProcessor : public AudioProcessor
+class ToneMixProcessor : public AudioProcessor
 {
 public:
-	ToneProcessor(IPlugBase* pPlug);
-	~ToneProcessor();
+	enum EParameters {kMixPercentParam, kNumParams};
+
+	ToneMixProcessor(IPlugBase* pPlug);
+	~ToneMixProcessor();
 
 	double GetAdjustedSample(double input, double output);
 

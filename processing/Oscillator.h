@@ -9,29 +9,18 @@
 
 #define M_PI 3.14159265358979323846
 
-enum OscillatorParameters {
-	kOscillatorFrequencyParam,
-	kOscillatorModeParam,
-	kNumOscillatorParams,
-};
-
-enum OscillatorMode {
-	kModeSine,
-	kModeTriangle,
-	kModeSquare,
-	kModeSawtooth,
-	kNumOscillatorModes
-};
-
 class Oscillator : public AudioProcessor
 {
 public:
+	enum EParameters {kFrequencyParam, kWaveformParam, kNumParams};
+	enum EWaveforms {kSineWave, kTriangleWave, kSquareWave, kSawtoothWave, kNumWaveforms};
+
 	Oscillator(IPlugBase* pPlug);
 	~Oscillator();
 
 	double GetNextSample();
 
-	void SetMode(int newMode);
+	void SetWaveform(int waveform);
 	void SetFrequency(double frequency);
 
 protected:
@@ -39,7 +28,7 @@ protected:
 	void HandleHostReset() override;
 
 private:
-	int mOscillatorMode;
+	int mWaveform;
 	double mFrequency;
 
 	double mPhasePosition;
