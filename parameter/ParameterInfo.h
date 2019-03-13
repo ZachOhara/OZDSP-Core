@@ -11,6 +11,8 @@ public:
 	~ParameterInfo();
 
 	// Common parameter types
+	ParameterInfo& MakeEnvelopeTimeParam();
+	ParameterInfo& MakeEnvelopeShapeParam();
 	ParameterInfo& MakeFrequencyParam();
 	ParameterInfo& MakePercentageParam(double defaultValue = 100.0);
 	ParameterInfo& MakeVolumeReductionParam();

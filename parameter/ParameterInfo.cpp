@@ -8,6 +8,21 @@ ParameterInfo::~ParameterInfo()
 {
 }
 
+ParameterInfo & ParameterInfo::MakeEnvelopeTimeParam()
+{
+	static const double min_s = 0.001;
+	static const double max_s = 3.0;
+	static const double default_s = 0.001;
+	static const double step_s = 0.001;
+	return (*this)
+		.InitNumericParam(default_s, min_s, max_s, step_s, "s");
+}
+
+ParameterInfo & ParameterInfo::MakeEnvelopeShapeParam()
+{
+	return (*this).InitSelectionParam({ "Linear", "Exponential", "Logarithmic" }, false);
+}
+
 ParameterInfo& ParameterInfo::MakeFrequencyParam()
 {
 	static const double min_hz = 20.0;
