@@ -33,10 +33,20 @@ ParameterInfo& ParameterInfo::MakeVolumeReductionParam()
 	static const double max_db = 0.0;
 	static const double default_db = 0.0;
 	static const double step_db = 0.1;
+	static const double shapeFactor = 0.137808; // see note at bottom of this function
 	return (*this)
 		.InitNumericParam(default_db, min_db, max_db, step_db, "dB")
-		.SetValueShapeFactor(0.15) // chosen so 1/2 way is -10 dB (sounds good because log scale)
+		.SetValueShapeFactor(shapeFactor)
 		.AddSpecialDisplayValue(-100, "-oo dB");
+	/*
+	 * I could write a paper on the value of shapeFactor and why it's perfectly tuned
+	 * but you'll just have to trust me on it. It's set based on the way humans
+	 * percieve loudness of sounds relative to amplitude, and also on the relationship
+	 * between amplitude and decibels. This particular value is the shape that makes
+	 * the loudness of a decibel knob seem linear (e.g. if the knob is turned halfway,
+	 * the resulting signal should *sound* half as loud). Note that this *is* affected
+	 * by whatever the minimum decibel value is.
+	 */
 }
 
 ParameterInfo& ParameterInfo::MakeWaveformParam()
