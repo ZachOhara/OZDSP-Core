@@ -12,17 +12,29 @@ EnvelopeProcessor::~EnvelopeProcessor()
 
 double EnvelopeProcessor::GetAdjustedSample(double sample)
 {
-	mVolumeProcessor.SetDecibels(CalculateCurrentAdjustment());
-
-	// Set up the next sample
-	mElapsedTime += mSecondsPerSample;
-	if (IsReadyToProgress())
+	if (!IsInStationarySegment())
 	{
-		mElapsedTime = 0; // TODO be more precise: subtract the time setting
-		mCurrentSegment++;
-		if (mCurrentSegment > kReleaseSegment)
+		mCurrentOutput += mIncrement;
+		mRemainingSamples--;
+	}
+
+	// TODO maybe only set this once for the stationary segments?
+	mVolumeProcessor.SetLoudness(mCurrentOutput);
+
+	if (!IsInStationarySegment() && mRemainingSamples == 0)
+	{
+		switch (mCurrentSegment)
 		{
-			mCurrentSegment = kSilenceSegment;
+		// kSilenceSegment and kSustainSegment won't be here
+		case kAttackSegment:
+			ProgressSegment(kDecaySegment, mDecayTime, mSustainLevel);
+			break;
+		case kDecaySegment:
+			ProgressSegment(kSustainSegment, 0.0, 0.0);
+			break;
+		case kReleaseSegment:
+			ProgressSegment(kSilenceSegment, 0.0, 0.0);
+			break;
 		}
 	}
 
@@ -31,14 +43,12 @@ double EnvelopeProcessor::GetAdjustedSample(double sample)
 
 void EnvelopeProcessor::TriggerNoteAttack()
 {
-	mElapsedTime = 0;
-	mCurrentSegment = kAttackSegment;
+	ProgressSegment(kAttackSegment, mAttackTime, 1.0);
 }
 
 void EnvelopeProcessor::TriggerNoteRelease()
 {
-	mElapsedTime = 0;
-	mCurrentSegment = kReleaseSegment;
+	ProgressSegment(kReleaseSegment, mReleaseTime, 0.0);
 }
 
 bool EnvelopeProcessor::IsNoteSilent()
@@ -46,44 +56,28 @@ bool EnvelopeProcessor::IsNoteSilent()
 	return mCurrentSegment == kSilenceSegment;
 }
 
-double EnvelopeProcessor::CalculateCurrentAdjustment()
+bool EnvelopeProcessor::IsInStationarySegment()
 {
-	switch (mCurrentSegment)
-	{
-	case kSilenceSegment:
-		return kMinDb;
-	case kAttackSegment:
-		return kMinDb + ((mElapsedTime / mAttackTime) * (kMaxDb - kMinDb));
-	case kDecaySegment:
-		return kMaxDb - ((mElapsedTime / mDecayTime) * (kMaxDb - mSustainLevel));
-	case kSustainSegment:
-		return mSustainLevel;
-	case kReleaseSegment:
-		return mSustainLevel - ((mElapsedTime / mReleaseTime) * (mSustainLevel - kMinDb));
-	default:
-		return 0;
-	}
+	return mCurrentSegment == kSilenceSegment || mCurrentSegment == kSustainSegment;
 }
 
-bool EnvelopeProcessor::IsReadyToProgress()
+void EnvelopeProcessor::ProgressSegment(int newSegment, double segmentDuration, double goalOutput)
 {
-	switch (mCurrentSegment)
+	mCurrentSegment = newSegment;
+	if (IsInStationarySegment())
 	{
-	case kSilenceSegment:
-		// This progression should be triggered by a midi event
-		return false;
-	case kAttackSegment:
-		return mElapsedTime >= mAttackTime;
-	case kDecaySegment:
-		return mElapsedTime >= mDecayTime;
-	case kSustainSegment:
-		// This progression should be triggered by a midi event
-		return false;
-	case kReleaseSegment:
-		return mElapsedTime >= mReleaseTime;
-	default:
-		// This should never happen
-		return false;
+		mRemainingSamples = -1;
+		mIncrement = 0.0;
+		if (mCurrentSegment == kSilenceSegment)
+			mCurrentOutput = 0.0;
+		else // in sustain segment
+			mCurrentOutput = mSustainLevel;
+	}
+	else
+	{
+		double dLevel = goalOutput - mCurrentOutput;
+		mRemainingSamples = (int) std::floor(segmentDuration / mSecondsPerSample);
+		mIncrement = dLevel / mRemainingSamples;
 	}
 }
 
@@ -98,7 +92,8 @@ void EnvelopeProcessor::HandleParamChange(int paramType, double newValue, int ne
 		mDecayTime = newValue;
 		break;
 	case kSustainLevelParam:
-		mSustainLevel = newValue;
+		// incoming value is a percent
+		mSustainLevel = newValue / 100.0;
 		break;
 	case kReleaseTimeParam:
 		mReleaseTime = newValue;

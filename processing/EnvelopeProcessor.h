@@ -6,6 +6,8 @@
 #include "AudioProcessor.h"
 #include "VolumeProcessor.h"
 
+#include <cmath>
+
 class EnvelopeProcessor : public AudioProcessor
 {
 public:
@@ -29,15 +31,14 @@ protected:
 private:
 	enum ESegments {kSilenceSegment, kAttackSegment, kDecaySegment, kSustainSegment, kReleaseSegment};
 
-	const double kMinDb = -100.0;
-	const double kMaxDb = 0.0;
-
 	VolumeProcessor mVolumeProcessor;
 
 	double mSecondsPerSample;
 
-	double mElapsedTime;
 	int mCurrentSegment;
+	int mRemainingSamples;
+	double mCurrentOutput;
+	double mIncrement;
 
 	double mAttackTime;
 	double mDecayTime;
@@ -47,8 +48,8 @@ private:
 	int mDecayShape;
 	int mReleaseShape;
 
-	double CalculateCurrentAdjustment();
-	bool IsReadyToProgress();
+	bool IsInStationarySegment();
+	void ProgressSegment(int newSegment, double segmentDuration, double goalOutput);
 };
 
 #endif // !__ENVELOPE_PROCESSOR_H__

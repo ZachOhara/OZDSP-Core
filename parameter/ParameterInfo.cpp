@@ -8,17 +8,18 @@ ParameterInfo::~ParameterInfo()
 {
 }
 
-ParameterInfo & ParameterInfo::MakeEnvelopeTimeParam()
+ParameterInfo& ParameterInfo::MakeEnvelopeTimeParam()
 {
 	static const double min_s = 0.001;
 	static const double max_s = 3.0;
 	static const double default_s = 0.001;
 	static const double step_s = 0.001;
 	return (*this)
-		.InitNumericParam(default_s, min_s, max_s, step_s, "s");
+		.InitNumericParam(default_s, min_s, max_s, step_s, "s")
+		.SetValueShapeFactor(2.0);
 }
 
-ParameterInfo & ParameterInfo::MakeEnvelopeShapeParam()
+ParameterInfo& ParameterInfo::MakeEnvelopeShapeParam()
 {
 	return (*this).InitSelectionParam({ "Linear", "Exponential", "Logarithmic" }, false);
 }
