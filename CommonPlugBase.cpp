@@ -60,15 +60,7 @@ void CommonPlugBase::OnParamChange(int paramIndex)
 {
 	IMutexLock lock(this);
 
-	/*
-	// Update processors
-	int nBridges = mParameterRegistry.size();
-	for (int i = 0; i < nBridges; i++) {
-		if (paramIndex == mParameterRegistry[i].first) {
-			mParameterRegistry[i].second->UpdateParam(paramIndex);
-		}
-	}
-	*/
+	// Notify the processors
 	int nProcessors = mProcessorRegistry.size();
 	for (int i = 0; i < nProcessors; i++) {
 		mProcessorRegistry[i]->NotifyParamChange(paramIndex);
@@ -88,6 +80,21 @@ void CommonPlugBase::CreatePresets()
 	// This method should be overriden when presets are implemented
 }
 
+ParameterInfoList CommonPlugBase::BuildParameterInfoList()
+{
+	// This method should be overridden by a subclass
+	// The returned value should contain all parameter display information
+	return {};
+}
+
+ProcessorRegistry CommonPlugBase::BuildProcessorRegistry()
+{
+	// This method should be overridden by a subclass
+	// The returned value should contain information pertaining to which
+	// parameters are mapped to which processors
+	return {};
+}
+
 IGraphics* CommonPlugBase::GetGraphics()
 {
 	return mpGraphics;
@@ -104,7 +111,35 @@ void CommonPlugBase::RegisterBitmap(int id, std::string name, int nFrames)
 	mBitmapRegistry[id] = bitmap;
 }
 
-void CommonPlugBase::AddParameters(std::vector<ParameterInfo>& paramList)
+void CommonPlugBase::FinishConstruction()
+{
+	AddParameters(BuildParameterInfoList());
+	RegisterProcessors(BuildProcessorRegistry());
+	AttachGraphics(GetGraphics());
+	CreatePresets();
+	ForceUpdateParameters();
+}
+
+void CommonPlugBase::RegisterProcessors(ProcessorRegistry& registry)
+{
+	int nProcessors = registry.size();
+	for (int i = 0; i < nProcessors; i++) {
+		// Register the processor to this plugin
+		ModularProcessor* processor = registry[i].first;
+		mProcessorRegistry.push_back(processor);
+
+		// Add parameters to the processor
+		std::vector<std::pair<int, int>>& parameters = registry[i].second;
+		int nParameters = parameters.size();
+		for (int j = 0; j < nParameters; j++) {
+			int index = parameters[j].first;
+			int type = parameters[j].second;
+			processor->RegisterParameter(index, type);
+		}
+	}
+}
+
+void CommonPlugBase::AddParameters(ParameterInfoList& paramList)
 {
 	int nParams = paramList.size();
 	for (int i = 0; i < nParams; i++) {
@@ -112,29 +147,9 @@ void CommonPlugBase::AddParameters(std::vector<ParameterInfo>& paramList)
 	}
 }
 
-void CommonPlugBase::RegisterProcessor(ModularProcessor* pProcessor)
-{
-	mProcessorRegistry.push_back(pProcessor);
-}
-
-/*
-void CommonPlugBase::RegisterProcessorParameter(ModularProcessor* pProcessor, int paramIndex, int paramType)
-{
-	mParameterRegistry.push_back(std::pair<int, ModularProcessor*>(paramIndex, pProcessor));
-	pProcessor->RegisterProcessorParameter(paramIndex, paramType);
-}
-*/
-
-void CommonPlugBase::FinishConstruction()
-{
-	AttachGraphics(GetGraphics());
-	CreatePresets();
-	ForceUpdateParameters();
-}
-
 void CommonPlugBase::AddParameter(ParameterInfo& param)
 {
-
+	// First check to make sure the parameter is initialied
 	if (param.IsParam()) {
 		IParam* pParamObj = GetParam(param.ParamIndex());
 		IBitmap& bitmap = mBitmapRegistry.find(param.BitmapId())->second;
@@ -179,9 +194,10 @@ void CommonPlugBase::AddNumericParameter(ParameterInfo& param, IParam* pParamObj
 
 	// Add special values
 	std::vector<std::pair<int, std::string>>& specialValues = param.SpecialDisplayValues();
-	for (auto iterator = specialValues.begin(); iterator != specialValues.end(); ++iterator) {
-		int value = iterator->first;
-		std::string& display = iterator->second;
+	int nSpecialValues = specialValues.size();
+	for (int i = 0; i < nSpecialValues; i++) {
+		int value = specialValues[i].first;
+		std::string& display = specialValues[i].second;
 		pParamObj->SetDisplayText(value, display.c_str());
 	}
 
