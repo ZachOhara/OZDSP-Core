@@ -58,12 +58,6 @@ protected:
 	void SetBackground(int id, std::string name);
 	void RegisterBitmap(int id, std::string name, int nFrames);
 
-	// Parameter system
-	// void AddParameters(std::vector<ParameterInfo>& paramList);
-
-	// Processor system
-	// void RegisterProcessor(ModularProcessor* pProcessor);
-
 	// Called by subclass at end of construction
 	void FinishConstruction();
 	
