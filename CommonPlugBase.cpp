@@ -60,12 +60,18 @@ void CommonPlugBase::OnParamChange(int paramIndex)
 {
 	IMutexLock lock(this);
 
+	/*
 	// Update processors
 	int nBridges = mParameterRegistry.size();
 	for (int i = 0; i < nBridges; i++) {
 		if (paramIndex == mParameterRegistry[i].first) {
 			mParameterRegistry[i].second->UpdateParam(paramIndex);
 		}
+	}
+	*/
+	int nProcessors = mProcessorRegistry.size();
+	for (int i = 0; i < nProcessors; i++) {
+		mProcessorRegistry[i]->NotifyParamChange(paramIndex);
 	}
 
 	// Update displays
@@ -106,16 +112,18 @@ void CommonPlugBase::AddParameters(std::vector<ParameterInfo>& paramList)
 	}
 }
 
-void CommonPlugBase::RegisterProcessor(AudioProcessor* pProcessor)
+void CommonPlugBase::RegisterProcessor(ModularProcessor* pProcessor)
 {
 	mProcessorRegistry.push_back(pProcessor);
 }
 
-void CommonPlugBase::RegisterProcessorParameter(AudioProcessor* pProcessor, int paramIndex, int paramType)
+/*
+void CommonPlugBase::RegisterProcessorParameter(ModularProcessor* pProcessor, int paramIndex, int paramType)
 {
-	mParameterRegistry.push_back(std::pair<int, AudioProcessor*>(paramIndex, pProcessor));
+	mParameterRegistry.push_back(std::pair<int, ModularProcessor*>(paramIndex, pProcessor));
 	pProcessor->RegisterProcessorParameter(paramIndex, paramType);
 }
+*/
 
 void CommonPlugBase::FinishConstruction()
 {

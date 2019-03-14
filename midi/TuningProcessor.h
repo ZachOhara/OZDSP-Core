@@ -3,12 +3,12 @@
 
 #include "IPlug_include_in_plug_hdr.h"
 
-#include "../processing/AudioProcessor.h"
+#include "../processing/ModularProcessor.h"
 
 #define NUM_MIDI_NOTES 128
 #define NUM_KEYS 12
 
-class TuningProcessor : public AudioProcessor
+class TuningProcessor : public ModularProcessor
 {
 public:
 	enum EParameters {kTemperamentParam, kKeyParam, kNumParams};

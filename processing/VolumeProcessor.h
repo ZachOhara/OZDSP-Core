@@ -3,7 +3,7 @@
 
 #include "IPlug_include_in_plug_hdr.h"
 
-#include "AudioProcessor.h"
+#include "ModularProcessor.h"
 
 #include <math.h>
 
@@ -11,7 +11,7 @@ double DecibelsToAmpFactor(double decibels);
 double AmpFactorToDecibels(double ampFactor);
 double LoudnessToAmpFactor(double loudness);
 
-class VolumeProcessor : public AudioProcessor
+class VolumeProcessor : public ModularProcessor
 {
 public:
 	enum EParameters {kDecibelsParam, kLoudnessParam, kNumParams};

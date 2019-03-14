@@ -3,9 +3,9 @@
 
 #include "IPlug_include_in_plug_hdr.h"
 
-#include "AudioProcessor.h"
+#include "ModularProcessor.h"
 
-class ToneMixProcessor : public AudioProcessor
+class ToneMixProcessor : public ModularProcessor
 {
 public:
 	enum EParameters {kMixPercentParam, kNumParams};

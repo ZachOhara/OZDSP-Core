@@ -1,7 +1,7 @@
 #include "ToneMixProcessor.h"
 
 ToneMixProcessor::ToneMixProcessor(IPlugBase* pPlug) :
-	AudioProcessor(pPlug, kNumParams),
+	ModularProcessor(pPlug, kNumParams),
 	mMixFactor(1.0)
 {
 }

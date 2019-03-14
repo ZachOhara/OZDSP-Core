@@ -3,12 +3,12 @@
 
 #include "IPlug_include_in_plug_hdr.h"
 
-#include "AudioProcessor.h"
+#include "ModularProcessor.h"
 #include "VolumeProcessor.h"
 
 #include <cmath>
 
-class EnvelopeProcessor : public AudioProcessor
+class EnvelopeProcessor : public ModularProcessor
 {
 public:
 	enum EParameters {kAttackTimeParam, kDecayTimeParam, kSustainLevelParam, kReleaseTimeParam,

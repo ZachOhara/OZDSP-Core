@@ -1,7 +1,7 @@
 #include "EnvelopeProcessor.h"
 
 EnvelopeProcessor::EnvelopeProcessor(IPlugBase* pPlug) :
-	AudioProcessor(pPlug, kNumParams),
+	ModularProcessor(pPlug, kNumParams),
 	mVolumeProcessor(pPlug)
 {
 }

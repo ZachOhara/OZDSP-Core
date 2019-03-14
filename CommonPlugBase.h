@@ -5,7 +5,7 @@
 
 #include "parameter/ParameterInfo.h"
 #include "parameter/ParameterValueLabel.h"
-#include "processing/AudioProcessor.h"
+#include "processing/ModularProcessor.h"
 
 #include <map>
 #include <string>
@@ -56,8 +56,8 @@ protected:
 	void AddParameters(std::vector<ParameterInfo>& paramList);
 
 	// Processor system
-	void RegisterProcessor(AudioProcessor* pProcessor);
-	void RegisterProcessorParameter(AudioProcessor* pProcessor, int paramIndex, int paramType);
+	void RegisterProcessor(ModularProcessor* pProcessor);
+	//void RegisterProcessorParameter(ModularProcessor* pProcessor, int paramIndex, int paramType);
 
 	// Called by subclass at end of construction
 	void FinishConstruction();
@@ -68,8 +68,8 @@ private:
 	std::map<int, IBitmap> mBitmapRegistry;
 	std::map<int, ParameterValueLabel*> mLabelRegistry;
 
-	std::vector<AudioProcessor*> mProcessorRegistry;
-	std::vector<std::pair<int, AudioProcessor*>> mParameterRegistry;
+	std::vector<ModularProcessor*> mProcessorRegistry;
+	//std::vector<std::pair<int, ModularProcessor*>> mParameterRegistry;
 
 	void AddParameter(ParameterInfo& param);
 	void AddSelectionParameter(ParameterInfo& param, IParam* pParamObj, IBitmap& bitmap);

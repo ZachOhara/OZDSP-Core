@@ -5,17 +5,17 @@
 
 #include <vector>
 
-class AudioProcessor
+class ModularProcessor
 {
 public:
-	AudioProcessor(IPlugBase* pPlug, int nParams);
-	~AudioProcessor();
+	ModularProcessor(IPlugBase* pPlug, int nParams);
+	~ModularProcessor();
 
-	void UpdateParam(int paramIndex);
+	void NotifyParamChange(int paramIndex);
 	void SetSampleRate(double sampleRate);
 	void Reset();
 
-	void RegisterProcessorParameter(int paramIndex, int paramType);
+	void RegisterParameter(int paramIndex, int paramType);
 
 protected:
 	virtual void HandleParamChange(int paramType, double newValue, int newIntValue);

@@ -3,13 +3,13 @@
 
 #include "IPlug_include_in_plug_hdr.h"
 
-#include "AudioProcessor.h"
+#include "ModularProcessor.h"
 
 #include <cmath>
 
 #define M_PI 3.14159265358979323846
 
-class Oscillator : public AudioProcessor
+class Oscillator : public ModularProcessor
 {
 public:
 	enum EParameters {kFrequencyParam, kWaveformParam, kNumParams};

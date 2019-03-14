@@ -1,7 +1,7 @@
 #include "Oscillator.h"
 
 Oscillator::Oscillator(IPlugBase* pPlug) :
-	AudioProcessor(pPlug, kNumParams),
+	ModularProcessor(pPlug, kNumParams),
 	mWaveform(kSineWave),
 	mFrequency(0),
 	mPhasePosition(0),
