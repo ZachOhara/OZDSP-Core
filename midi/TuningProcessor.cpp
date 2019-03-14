@@ -24,6 +24,8 @@ double TuningProcessor::GetFrequencyOfNote(int noteId)
 		return justTemperamentTunings[mCurrentKey][noteId];
 	case kJustTemperamentMinor:
 		return justTemperamentTunings[mRelativeMajorKey][noteId];
+	default:
+		return 0;
 	}
 	
 }
@@ -73,7 +75,7 @@ void TuningProcessor::InitJustTemperamentTunings()
 		for (int i = 0; i < NUM_MIDI_NOTES; i++)
 		{
 			int semitoneOffset = i - center_id;
-			int octaveOffset = std::floor(((double)semitoneOffset) / 12.0);
+			int octaveOffset = (int) std::floor(((double)semitoneOffset) / 12.0);
 			justTemperamentTunings[key][i] = justTemperamentTunings[key][i - (octaveOffset * 12)] * std::pow(2, octaveOffset);
 		}
 	}
