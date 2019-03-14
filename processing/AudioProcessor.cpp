@@ -58,12 +58,9 @@ double AudioProcessor::GetSampleRate()
 int AudioProcessor::LookupParamType(int paramIndex)
 {
 	int nParams = mParamIndicies.size();
-	for (int i = 0; i < nParams; i++)
-	{
+	for (int i = 0; i < nParams; i++) {
 		if (mParamIndicies[i] == paramIndex)
-		{
 			return i;
-		}
 	}
 	return -1;
 }

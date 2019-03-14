@@ -50,8 +50,7 @@ void CommonPlugBase::Reset()
 	// Reset processors
 	double sampleRate = GetSampleRate();
 	int nProcessors = mProcessorRegistry.size();
-	for (int i = 0; i < nProcessors; i++)
-	{
+	for (int i = 0; i < nProcessors; i++) {
 		mProcessorRegistry[i]->SetSampleRate(sampleRate);
 		mProcessorRegistry[i]->Reset();
 	}
@@ -63,18 +62,15 @@ void CommonPlugBase::OnParamChange(int paramIndex)
 
 	// Update processors
 	int nBridges = mParameterRegistry.size();
-	for (int i = 0; i < nBridges; i++)
-	{
-		if (paramIndex == mParameterRegistry[i].first)
-		{
+	for (int i = 0; i < nBridges; i++) {
+		if (paramIndex == mParameterRegistry[i].first) {
 			mParameterRegistry[i].second->UpdateParam(paramIndex);
 		}
 	}
 
 	// Update displays
 	auto search = mLabelRegistry.find(paramIndex);
-	if (search != mLabelRegistry.end())
-	{
+	if (search != mLabelRegistry.end()) {
 		ParameterValueLabel* label = search->second;
 		label->UpdateDisplay();
 	}
@@ -105,8 +101,7 @@ void CommonPlugBase::RegisterBitmap(int id, std::string name, int nFrames)
 void CommonPlugBase::AddParameters(std::vector<ParameterInfo>& paramList)
 {
 	int nParams = paramList.size();
-	for (int i = 0; i < nParams; i++)
-	{
+	for (int i = 0; i < nParams; i++) {
 		AddParameter(paramList[i]);
 	}
 }
@@ -132,25 +127,15 @@ void CommonPlugBase::FinishConstruction()
 void CommonPlugBase::AddParameter(ParameterInfo& param)
 {
 
-	if (param.IsParam())
-	{
+	if (param.IsParam()) {
 		IParam* pParamObj = GetParam(param.ParamIndex());
 		IBitmap& bitmap = mBitmapRegistry.find(param.BitmapId())->second;
-
 		if (param.IsParamSelection())
-		{
 			AddSelectionParameter(param, pParamObj, bitmap);
-		}
-
 		if (param.IsParamNumeric())
-		{
 			AddNumericParameter(param, pParamObj, bitmap);
-		}
-
 		if (param.IsParamLabeled())
-		{
 			AddParameterLabel(param, pParamObj, bitmap);
-		}
 	}
 }
 
@@ -162,18 +147,14 @@ void CommonPlugBase::AddSelectionParameter(ParameterInfo& param, IParam* pParamO
 
 	// Populate the state list
 	std::vector<std::string>& stateList = param.StateList();
-	for (int i = 0; i < param.NumStates(); i++)
-	{
+	for (int i = 0; i < param.NumStates(); i++) {
 		pParamObj->SetDisplayText(i, stateList[i].c_str());
 	}
 
 	// Initialize graphics
-	if (param.IsSelectionDropdown())
-	{
+	if (param.IsSelectionDropdown()) {
 		// TODO: dropdown
-	}
-	else
-	{
+	} else {
 		GetGraphics()->AttachControl(new ISwitchControl(
 			this, param.PosX(), param.PosY(), param.ParamIndex(), &bitmap));
 	}
@@ -190,8 +171,7 @@ void CommonPlugBase::AddNumericParameter(ParameterInfo& param, IParam* pParamObj
 
 	// Add special values
 	std::vector<std::pair<int, std::string>>& specialValues = param.SpecialDisplayValues();
-	for (auto iterator = specialValues.begin(); iterator != specialValues.end(); ++iterator)
-	{
+	for (auto iterator = specialValues.begin(); iterator != specialValues.end(); ++iterator) {
 		int value = iterator->first;
 		std::string& display = iterator->second;
 		pParamObj->SetDisplayText(value, display.c_str());
@@ -216,8 +196,7 @@ void CommonPlugBase::AddParameterLabel(ParameterInfo& param, IParam* pParamObj, 
 void CommonPlugBase::ForceUpdateParameters()
 {
 	int nParams = NParams();
-	for (int i = 0; i < nParams; i++)
-	{
+	for (int i = 0; i < nParams; i++) {
 		OnParamChange(i);
 	}
 }

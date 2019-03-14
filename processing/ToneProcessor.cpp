@@ -27,8 +27,7 @@ void ToneMixProcessor::SetMixFactor(double mixFactor)
 
 void ToneMixProcessor::HandleParamChange(int paramType, double newValue, int newIntValue)
 {
-	switch (paramType)
-	{
+	switch (paramType) {
 	case kMixPercentParam:
 		SetMixPercent(newValue);
 		break;

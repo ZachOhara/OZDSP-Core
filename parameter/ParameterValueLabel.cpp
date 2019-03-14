@@ -44,8 +44,7 @@ void ParameterValueLabel::OnMouseDblClick(int x, int y, IMouseMod * pMod)
 
 void ParameterValueLabel::TextFromTextEntry(const char* text)
 {
-	try
-	{
+	try {
 		std::string sText(text);
 		double value;
 		// This is the line that's going to cause exceptions, if any
@@ -57,9 +56,7 @@ void ParameterValueLabel::TextFromTextEntry(const char* text)
 		mPlug->SetParameterFromGUI(mParamIndex, mpParam->GetNormalized());
 		// Let our gui know the value changed
 		mPlug->GetGUI()->SetParameterFromPlug(mParamIndex, value, false);
-	}
-	catch (std::exception& e)
-	{
+	} catch (std::exception& e) {
 		// Probably just some invalid text entered
 		// Ignore it and don't update the value
 	}

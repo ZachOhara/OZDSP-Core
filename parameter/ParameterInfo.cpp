@@ -114,7 +114,7 @@ ParameterInfo& ParameterInfo::SetValueShapeFactor(double weightFactor)
 	return *this;
 }
 
-ParameterInfo & ParameterInfo::AddSpecialDisplayValue(int value, std::string display)
+ParameterInfo& ParameterInfo::AddSpecialDisplayValue(int value, std::string display)
 {
 	mSpecialDisplayValues.push_back(std::pair<int, std::string>(value, display));
 	return *this;

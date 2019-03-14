@@ -25,8 +25,7 @@ public:
 private:
 	const int kMiddleA_id = 57;
 	const double kMiddleA_hz = 440.0;
-	const int justifiedMajorRatios[12][2] =
-	{
+	const int justifiedMajorRatios[12][2] = {
 		{1, 1}, {16, 15}, {9, 8}, {6, 5}, {5, 4}, {4, 3},
 		{45, 32}, {3, 2}, {8, 5}, {5, 3}, {9, 5}, {15, 8}
 	};

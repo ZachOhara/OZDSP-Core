@@ -12,8 +12,7 @@ EnvelopeProcessor::~EnvelopeProcessor()
 
 double EnvelopeProcessor::GetAdjustedSample(double sample)
 {
-	if (!IsInStationarySegment())
-	{
+	if (!IsInStationarySegment()) {
 		mCurrentOutput += mIncrement;
 		mRemainingSamples--;
 	}
@@ -21,10 +20,8 @@ double EnvelopeProcessor::GetAdjustedSample(double sample)
 	// TODO maybe only set this once for the stationary segments?
 	mVolumeProcessor.SetLoudness(mCurrentOutput);
 
-	if (!IsInStationarySegment() && mRemainingSamples == 0)
-	{
-		switch (mCurrentSegment)
-		{
+	if (!IsInStationarySegment() && mRemainingSamples == 0) {
+		switch (mCurrentSegment) {
 		// kSilenceSegment and kSustainSegment won't be here
 		case kAttackSegment:
 			ProgressSegment(kDecaySegment, mDecayTime, mSustainLevel);
@@ -64,17 +61,14 @@ bool EnvelopeProcessor::IsInStationarySegment()
 void EnvelopeProcessor::ProgressSegment(int newSegment, double segmentDuration, double goalOutput)
 {
 	mCurrentSegment = newSegment;
-	if (IsInStationarySegment())
-	{
+	if (IsInStationarySegment()) {
 		mRemainingSamples = -1;
 		mIncrement = 0.0;
 		if (mCurrentSegment == kSilenceSegment)
 			mCurrentOutput = 0.0;
 		else // in sustain segment
 			mCurrentOutput = mSustainLevel;
-	}
-	else
-	{
+	} else {
 		double dLevel = goalOutput - mCurrentOutput;
 		mRemainingSamples = (int) std::floor(segmentDuration / mSecondsPerSample);
 		mIncrement = dLevel / mRemainingSamples;
@@ -83,8 +77,7 @@ void EnvelopeProcessor::ProgressSegment(int newSegment, double segmentDuration, 
 
 void EnvelopeProcessor::HandleParamChange(int paramType, double newValue, int newIntValue)
 {
-	switch (paramType)
-	{
+	switch (paramType) {
 	case kAttackTimeParam:
 		mAttackTime = newValue;
 		break;

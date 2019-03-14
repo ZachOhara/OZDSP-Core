@@ -4,8 +4,7 @@ MidiStackReciever::MidiStackReciever()
 {
 	mNoteIdStack.emplace(-1); // -1 is for no notes pressed
 
-	for (int i = 0; i < NUM_MIDI_NOTES; i++)
-	{
+	for (int i = 0; i < NUM_MIDI_NOTES; i++) {
 		mNoteStatus[i] = kNoteInactive;
 	}
 }
@@ -31,15 +30,13 @@ void MidiStackReciever::AdvanceSample(std::queue<MidiEvent>* eventQueue)
 	int lastSoundingNoteId = mNoteIdStack.top();
 
 	// search the messages
-	while (!mMidiQueue.Empty() && mMidiQueue.Peek()->mOffset <= mSampleOffset)
-	{
+	while (!mMidiQueue.Empty() && mMidiQueue.Peek()->mOffset <= mSampleOffset) {
 		IMidiMsg* pMessage = mMidiQueue.Peek();
 		mMidiQueue.Remove();
 
 		int noteId = pMessage->NoteNumber();
 
-		switch (pMessage->StatusMsg())
-		{
+		switch (pMessage->StatusMsg()) {
 		case IMidiMsg::kNoteOn:
 			HandleNoteOn(noteId);
 			break;
@@ -52,21 +49,15 @@ void MidiStackReciever::AdvanceSample(std::queue<MidiEvent>* eventQueue)
 	// Find out what changed and queue it
 	int newSoundingNoteId = mNoteIdStack.top();
 
-	if (lastSoundingNoteId != newSoundingNoteId)
-	{
+	if (lastSoundingNoteId != newSoundingNoteId) {
 		MidiEvent statusEvent;
-		if (lastSoundingNoteId == -1)
-		{
+		if (lastSoundingNoteId == -1) {
 			statusEvent.eventType = MidiEvent::kNoteBegin;
 			statusEvent.noteId = newSoundingNoteId;
-		}
-		else if (newSoundingNoteId == -1)
-		{
+		} else if (newSoundingNoteId == -1) {
 			statusEvent.eventType = MidiEvent::kNoteEnd;
 			statusEvent.noteId = lastSoundingNoteId;
-		}
-		else
-		{
+		} else {
 			statusEvent.eventType = MidiEvent::kNoteChange;
 			statusEvent.noteId = lastSoundingNoteId;
 			statusEvent.newNoteId = newSoundingNoteId;
@@ -88,8 +79,7 @@ void MidiStackReciever::HandleNoteOff(int noteId)
 {
 	mNoteStatus[noteId] = kNoteInactive;
 
-	while (mNoteIdStack.top() >= 0 && mNoteStatus[mNoteIdStack.top()] == kNoteInactive)
-	{
+	while (mNoteIdStack.top() >= 0 && mNoteStatus[mNoteIdStack.top()] == kNoteInactive) {
 		mNoteIdStack.pop();
 	}
 }

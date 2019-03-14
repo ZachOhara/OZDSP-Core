@@ -37,8 +37,7 @@ void VolumeProcessor::SetAmpFactor(double ampFactor)
 
 void VolumeProcessor::HandleParamChange(int paramType, double newValue, int newIntValue)
 {
-	switch (paramType)
-	{
+	switch (paramType) {
 	case kDecibelsParam:
 		GetDecibelsFromParam(newValue);
 		break;
@@ -56,18 +55,13 @@ void VolumeProcessor::GetDecibelsFromParam(double paramValue)
 
 	// If the value is below the threshold, just set it to the minimum
 	if (paramValue <= threshold_db && paramValue != minValue)
-	{
 		pParam->Set(minValue);
-	}
+
 	// Now update the processor
 	if (paramValue != minValue)
-	{
 		SetDecibels(paramValue);
-	}
 	else
-	{
 		SetZero();
-	}
 }
 
 double DecibelsToAmpFactor(double decibels)

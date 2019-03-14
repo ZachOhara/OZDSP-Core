@@ -16,30 +16,18 @@ Oscillator::~Oscillator()
 double Oscillator::GetNextSample()
 {
 	double sampleValue = 0;
-	switch (mWaveform)
-	{
+	switch (mWaveform) {
 	case kSineWave:
 		sampleValue = sin(2 * M_PI * mPhasePosition);
 		break;
 	case kTriangleWave:
 		if (mPhasePosition < 0.5)
-		{
 			sampleValue = 1 - (4 * abs(mPhasePosition - 0.25));
-		}
 		else
-		{
 			sampleValue = (4 * abs(mPhasePosition - 0.75)) - 1;
-		}
 		break;
 	case kSquareWave:
-		if (mPhasePosition < 0.5)
-		{
-			sampleValue = 1;
-		}
-		else
-		{
-			sampleValue = -1;
-		}
+		sampleValue = (mPhasePosition < 0.5 ? 1.0 : -1.0);
 		break;
 	case kSawtoothWave:
 		sampleValue = 1 - (2 * mPhasePosition);
@@ -52,9 +40,7 @@ double Oscillator::GetNextSample()
 	// Update the phase for the next cycle
 	mPhasePosition += mPhaseIncrement;
 	if (mPhasePosition > 1)
-	{
 		mPhasePosition -= 1;
-	}
 
 	return sampleValue;
 }
@@ -72,8 +58,7 @@ void Oscillator::SetFrequency(double frequency)
 
 void Oscillator::HandleParamChange(int paramType, double newValue, int newIntValue)
 {
-	switch (paramType)
-	{
+	switch (paramType) {
 	case kFrequencyParam:
 		SetFrequency(newValue);
 		break;
