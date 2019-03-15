@@ -34,19 +34,10 @@ private:
 
 	double mSecondsPerSample;
 
-	/*
-	int mCurrentSegment;
-	int mRemainingSamples;
-	double mCurrentOutput;
-	double mIncrement;
-	*/
-
 	int mCurrentSegment;
 	int mSegmentSamples;
 	int mRemainingSamples;
 	double mSegmentExponent;
-	//double mSegmentProgress; // Should go from 0 to 1 over the course of the segment
-	//double mSegmentProgressIncrement;
 	double mSegmentInitialOutput;
 	double mSegmentDifference;
 	double mCurrentOutput;
@@ -60,7 +51,6 @@ private:
 	double mReleaseExponent;
 
 	bool IsInStationarySegment();
-	//void ProgressSegment(int newSegment, double segmentDuration, double goalOutput);
 	void ProgressToSegment(int newSegment, double duration, double goal, double exponent);
 
 	static double GetExponentFromShapeParameter(double shape);
