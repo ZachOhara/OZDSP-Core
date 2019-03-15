@@ -13,7 +13,6 @@ class EnvelopeProcessor : public ModularProcessor
 public:
 	enum EParameters {kAttackTimeParam, kDecayTimeParam, kSustainLevelParam, kReleaseTimeParam,
 		kAttackShapeParam, kDecayShapeParam, kReleaseShapeParam, kNumParams};
-	enum EEnvelopeShapes {kLinearShape, kExponentialShape, kLogarithmicShape};
 
 	EnvelopeProcessor(IPlugBase* pPlug);
 	~EnvelopeProcessor();
@@ -35,21 +34,36 @@ private:
 
 	double mSecondsPerSample;
 
+	/*
 	int mCurrentSegment;
 	int mRemainingSamples;
 	double mCurrentOutput;
 	double mIncrement;
+	*/
+
+	int mCurrentSegment;
+	int mSegmentSamples;
+	int mRemainingSamples;
+	double mSegmentExponent;
+	//double mSegmentProgress; // Should go from 0 to 1 over the course of the segment
+	//double mSegmentProgressIncrement;
+	double mSegmentInitialOutput;
+	double mSegmentDifference;
+	double mCurrentOutput;
 
 	double mAttackTime;
 	double mDecayTime;
 	double mSustainLevel;
 	double mReleaseTime;
-	int mAttackShape;
-	int mDecayShape;
-	int mReleaseShape;
+	double mAttackExponent;
+	double mDecayExponent;
+	double mReleaseExponent;
 
 	bool IsInStationarySegment();
-	void ProgressSegment(int newSegment, double segmentDuration, double goalOutput);
+	//void ProgressSegment(int newSegment, double segmentDuration, double goalOutput);
+	void ProgressToSegment(int newSegment, double duration, double goal, double exponent);
+
+	static double GetExponentFromShapeParameter(double shape);
 };
 
 #endif // !__ENVELOPE_PROCESSOR_H__
