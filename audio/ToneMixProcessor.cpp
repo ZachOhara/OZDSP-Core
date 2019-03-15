@@ -1,9 +1,9 @@
 #include "ToneMixProcessor.h"
 
 ToneMixProcessor::ToneMixProcessor() :
-	ModularProcessor(kNumParams),
-	mMixFactor(1.0)
+	ModularProcessor(kNumParams)
 {
+	SetMixFactor(1.0);
 }
 
 ToneMixProcessor::~ToneMixProcessor()

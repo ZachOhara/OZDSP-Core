@@ -1,8 +1,7 @@
 #include "EnvelopeProcessor.h"
 
 EnvelopeProcessor::EnvelopeProcessor() :
-	ModularProcessor(kNumParams),
-	mVolumeProcessor()
+	ModularProcessor(kNumParams)
 {
 	ProgressToSegment(kSilenceSegment, 0.0, 0.0, 1.0);
 }

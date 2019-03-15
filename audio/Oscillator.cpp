@@ -2,11 +2,9 @@
 
 Oscillator::Oscillator() :
 	ModularProcessor(kNumParams),
-	mWaveform(kSineWave),
-	mFrequency(0),
-	mPhasePosition(0),
-	mPhaseIncrement(0)
+	mWaveform(kSineWave)
 {
+	SetFrequency(0.0);
 }
 
 Oscillator::~Oscillator()

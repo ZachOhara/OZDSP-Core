@@ -1,9 +1,9 @@
 #include "VolumeProcessor.h"
 
 VolumeProcessor::VolumeProcessor():
-	ModularProcessor(kNumParams),
-	mAmpFactor(1.0)
+	ModularProcessor(kNumParams)
 {
+	SetAmpFactor(1.0);
 }
 
 VolumeProcessor::~VolumeProcessor()

@@ -2,6 +2,7 @@
 
 ModularProcessor::ModularProcessor(int nParams)
 {
+	mSampleRate = 1.0; // prevents division by zero errors in subclasses
 	mParamIndicies.resize(nParams);
 }
 
