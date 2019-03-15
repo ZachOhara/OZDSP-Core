@@ -15,15 +15,12 @@ double EnvelopeProcessor::GetAdjustedSample(double sample)
 {
 	if (!IsInStationarySegment()) {
 		double progress = 1.0 - (((double)mRemainingSamples) / ((double)mSegmentSamples));
-
 		double scaledProgress = pow(progress, mSegmentExponent);
 		double currentDelta = scaledProgress * mSegmentDifference;
 		mCurrentOutput = currentDelta + mSegmentInitialOutput;
-
 		mVolumeProcessor.SetLoudness(mCurrentOutput);
-
+		// Update sample count and (possibly) progress the segment
 		mRemainingSamples--;
-
 		if (mRemainingSamples == 0) {
 			switch (mCurrentSegment) {
 			case kAttackSegment:
@@ -62,25 +59,6 @@ bool EnvelopeProcessor::IsInStationarySegment()
 	return mCurrentSegment == kSilenceSegment || mCurrentSegment == kSustainSegment;
 }
 
-/*
-void EnvelopeProcessor::ProgressSegment(int newSegment, double segmentDuration, double goalOutput)
-{
-	mCurrentSegment = newSegment;
-	if (IsInStationarySegment()) {
-		mRemainingSamples = -1;
-		mIncrement = 0.0;
-		if (mCurrentSegment == kSilenceSegment)
-			mCurrentOutput = 0.0;
-		else // in sustain segment
-			mCurrentOutput = mSustainLevel;
-	} else {
-		double dLevel = goalOutput - mCurrentOutput;
-		mRemainingSamples = (int) std::floor(segmentDuration / mSecondsPerSample);
-		mIncrement = dLevel / mRemainingSamples;
-	}
-}
-*/
-
 void EnvelopeProcessor::ProgressToSegment(int newSegment, double duration, double goal, double exponent)
 {
 	mCurrentSegment = newSegment;
@@ -98,8 +76,6 @@ void EnvelopeProcessor::ProgressToSegment(int newSegment, double duration, doubl
 	} else {
 		mSegmentInitialOutput = mCurrentOutput;
 		mSegmentDifference = goal - mCurrentOutput;
-		//mRemainingSamples = (int)std::floor(segmentDuration / mSecondsPerSample);
-		//mSegmentProgressIncrement = 1.0 / mRemainingSamples;
 	}
 }
 
