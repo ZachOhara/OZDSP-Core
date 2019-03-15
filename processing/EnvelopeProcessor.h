@@ -14,7 +14,7 @@ public:
 	enum EParameters {kAttackTimeParam, kDecayTimeParam, kSustainLevelParam, kReleaseTimeParam,
 		kAttackShapeParam, kDecayShapeParam, kReleaseShapeParam, kNumParams};
 
-	EnvelopeProcessor(IPlugBase* pPlug);
+	EnvelopeProcessor();
 	~EnvelopeProcessor();
 
 	double GetAdjustedSample(double sample);

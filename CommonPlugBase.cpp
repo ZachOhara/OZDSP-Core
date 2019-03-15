@@ -80,21 +80,6 @@ void CommonPlugBase::CreatePresets()
 	// This method should be overriden when presets are implemented
 }
 
-ParameterInfoList CommonPlugBase::BuildParameterInfoList()
-{
-	// This method should be overridden by a subclass
-	// The returned value should contain all parameter display information
-	return {};
-}
-
-ProcessorRegistry CommonPlugBase::BuildProcessorRegistry()
-{
-	// This method should be overridden by a subclass
-	// The returned value should contain information pertaining to which
-	// parameters are mapped to which processors
-	return {};
-}
-
 IGraphics* CommonPlugBase::GetGraphics()
 {
 	return mpGraphics;
@@ -111,39 +96,11 @@ void CommonPlugBase::RegisterBitmap(int id, std::string name, int nFrames)
 	mBitmapRegistry[id] = bitmap;
 }
 
-void CommonPlugBase::FinishConstruction()
+void CommonPlugBase::AddParameterList(std::vector<ParameterInfo>& parameterList)
 {
-	AddParameters(BuildParameterInfoList());
-	RegisterProcessors(BuildProcessorRegistry());
-	AttachGraphics(GetGraphics());
-	CreatePresets();
-	ForceUpdateParameters();
-}
-
-void CommonPlugBase::RegisterProcessors(ProcessorRegistry& registry)
-{
-	int nProcessors = registry.size();
-	for (int i = 0; i < nProcessors; i++) {
-		// Register the processor to this plugin
-		ModularProcessor* processor = registry[i].first;
-		mProcessorRegistry.push_back(processor);
-
-		// Add parameters to the processor
-		std::vector<std::pair<int, int>>& parameters = registry[i].second;
-		int nParameters = parameters.size();
-		for (int j = 0; j < nParameters; j++) {
-			int index = parameters[j].first;
-			int type = parameters[j].second;
-			processor->RegisterParameter(index, type);
-		}
-	}
-}
-
-void CommonPlugBase::AddParameters(ParameterInfoList& paramList)
-{
-	int nParams = paramList.size();
+	int nParams = parameterList.size();
 	for (int i = 0; i < nParams; i++) {
-		AddParameter(paramList[i]);
+		AddParameter(parameterList[i]);
 	}
 }
 
@@ -160,6 +117,27 @@ void CommonPlugBase::AddParameter(ParameterInfo& param)
 		if (param.IsParamLabeled())
 			AddParameterLabel(param, pParamObj, bitmap);
 	}
+}
+
+void CommonPlugBase::RegisterProcessorList(std::vector<ModularProcessor*> processorList)
+{
+	int nProcessors = processorList.size();
+	for (int i = 0; i < nProcessors; i++) {
+		RegisterProcessor(processorList[i]);
+	}
+}
+
+void CommonPlugBase::RegisterProcessor(ModularProcessor* processor)
+{
+	processor->SetParentPlugin(this);
+	mProcessorRegistry.push_back(processor);
+}
+
+void CommonPlugBase::FinishConstruction()
+{
+	AttachGraphics(GetGraphics());
+	CreatePresets();
+	ForceUpdateParameters();
 }
 
 void CommonPlugBase::AddSelectionParameter(ParameterInfo& param, IParam* pParamObj, IBitmap& bitmap)

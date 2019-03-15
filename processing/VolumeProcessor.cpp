@@ -1,7 +1,7 @@
 #include "VolumeProcessor.h"
 
-VolumeProcessor::VolumeProcessor(IPlugBase* pPlug):
-	ModularProcessor(pPlug, kNumParams),
+VolumeProcessor::VolumeProcessor():
+	ModularProcessor(kNumParams),
 	mAmpFactor(1.0)
 {
 }

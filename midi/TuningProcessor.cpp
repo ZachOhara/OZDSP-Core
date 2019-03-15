@@ -1,7 +1,7 @@
 #include "TuningProcessor.h"
 
-TuningProcessor::TuningProcessor(IPlugBase* pPlug) :
-	ModularProcessor(pPlug, kNumParams)
+TuningProcessor::TuningProcessor() :
+	ModularProcessor(kNumParams)
 {
 	InitEqualTemperamentTunings();
 	InitJustTemperamentTunings();

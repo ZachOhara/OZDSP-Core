@@ -8,14 +8,16 @@
 class ModularProcessor
 {
 public:
-	ModularProcessor(IPlugBase* pPlug, int nParams);
+	ModularProcessor(int nParams);
 	~ModularProcessor();
 
 	void NotifyParamChange(int paramIndex);
 	void SetSampleRate(double sampleRate);
 	void Reset();
 
+	void RegisterParameterList(std::vector<std::pair<int, int>> parameterList);
 	void RegisterParameter(int paramIndex, int paramType);
+	void SetParentPlugin(IPlugBase* pPlug);
 
 protected:
 	virtual void HandleParamChange(int paramType, double newValue, int newIntValue);

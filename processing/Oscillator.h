@@ -15,7 +15,7 @@ public:
 	enum EParameters {kFrequencyParam, kWaveformParam, kNumParams};
 	enum EWaveforms {kSineWave, kTriangleWave, kSquareWave, kSawtoothWave, kNumWaveforms};
 
-	Oscillator(IPlugBase* pPlug);
+	Oscillator();
 	~Oscillator();
 
 	double GetNextSample();

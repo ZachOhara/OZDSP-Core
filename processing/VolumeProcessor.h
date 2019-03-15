@@ -16,7 +16,7 @@ class VolumeProcessor : public ModularProcessor
 public:
 	enum EParameters {kDecibelsParam, kLoudnessParam, kNumParams};
 
-	VolumeProcessor(IPlugBase* pPlug);
+	VolumeProcessor();
 	~VolumeProcessor();
 
 	double GetAdjustedSample(double sample);

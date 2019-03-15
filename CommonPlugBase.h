@@ -16,9 +16,6 @@
 	PLUG_UNIQUE_ID, PLUG_MFR_ID, PLUG_LATENCY, PLUG_DOES_MIDI, \
 	PLUG_DOES_STATE_CHUNKS, PLUG_IS_INST, PLUG_SC_CHANS
 
-typedef std::vector<ParameterInfo> ParameterInfoList;
-typedef std::vector<std::pair<ModularProcessor*, std::vector<std::pair<int, int>>>> ProcessorRegistry;
-
 class CommonPlugBase : public IPlug
 {
 public:
@@ -48,15 +45,20 @@ public:
 protected:
 	// For a subclass to override
 	virtual void CreatePresets();
-	virtual ParameterInfoList BuildParameterInfoList();
-	virtual ProcessorRegistry BuildProcessorRegistry();
-
 
 	// Graphics-related methods
 	IGraphics* GetGraphics();
 
 	void SetBackground(int id, std::string name);
 	void RegisterBitmap(int id, std::string name, int nFrames);
+
+	// Parameter registration system
+	void AddParameterList(std::vector<ParameterInfo>& parameterList);
+	void AddParameter(ParameterInfo& param);
+
+	// Processor registration system
+	void RegisterProcessorList(std::vector<ModularProcessor*> processorList);
+	void RegisterProcessor(ModularProcessor* processor);
 
 	// Called by subclass at end of construction
 	void FinishConstruction();
@@ -69,10 +71,6 @@ private:
 
 	std::vector<ModularProcessor*> mProcessorRegistry;
 
-	void RegisterProcessors(ProcessorRegistry& registry);
-
-	void AddParameters(ParameterInfoList& paramList);
-	void AddParameter(ParameterInfo& param);
 	void AddSelectionParameter(ParameterInfo& param, IParam* pParamObj, IBitmap& bitmap);
 	void AddNumericParameter(ParameterInfo& param, IParam* pParamObj, IBitmap& bitmap);
 	void AddParameterLabel(ParameterInfo& param, IParam* pParamObj, IBitmap& bitmap);

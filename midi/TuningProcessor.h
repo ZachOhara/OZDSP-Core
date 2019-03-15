@@ -14,7 +14,7 @@ public:
 	enum EParameters {kTemperamentParam, kKeyParam, kNumParams};
 	enum ETemperaments {kEqualTemperament, kJustTemperamentMajor, kJustTemperamentMinor};
 
-	TuningProcessor(IPlugBase* pPlug);
+	TuningProcessor();
 	~TuningProcessor();
 
 	double GetFrequencyOfNote(int noteId);

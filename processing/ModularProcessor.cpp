@@ -1,8 +1,7 @@
 #include "ModularProcessor.h"
 
-ModularProcessor::ModularProcessor(IPlugBase* pPlug, int nParams)
+ModularProcessor::ModularProcessor(int nParams)
 {
-	mpPlug = pPlug;
 	mParamIndicies.resize(nParams);
 }
 
@@ -30,9 +29,22 @@ void ModularProcessor::Reset()
 	HandleHostReset();
 }
 
+void ModularProcessor::RegisterParameterList(std::vector<std::pair<int, int>> parameterList)
+{
+	int nParams = parameterList.size();
+	for (int i = 0; i < nParams; i++) {
+		RegisterParameter(parameterList[i].first, parameterList[i].second);
+	}
+}
+
 void ModularProcessor::RegisterParameter(int paramIndex, int paramType)
 {
 	mParamIndicies[paramType] = paramIndex;
+}
+
+void ModularProcessor::SetParentPlugin(IPlugBase* pPlug)
+{
+	mpPlug = pPlug;
 }
 
 void ModularProcessor::HandleParamChange(int paramType, double newValue, int newIntValue)
