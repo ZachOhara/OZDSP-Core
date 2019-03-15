@@ -1,9 +1,7 @@
 #ifndef __OSCILLATOR_H__
 #define __OSCILLATOR_H__
 
-#include "IPlug_include_in_plug_hdr.h"
-
-#include "ModularProcessor.h"
+#include "../ModularProcessor.h"
 
 #include <cmath>
 

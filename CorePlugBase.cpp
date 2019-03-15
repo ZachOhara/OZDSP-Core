@@ -1,6 +1,6 @@
-#include "CommonPlugBase.h"
+#include "CorePlugBase.h"
 
-CommonPlugBase::CommonPlugBase(
+CorePlugBase::CorePlugBase(
 	IPlugInstanceInfo instanceInfo,
 	int nParams,
 	int nPresets,
@@ -38,11 +38,11 @@ CommonPlugBase::CommonPlugBase(
 	mpGraphics = pGraphics;
 }
 
-CommonPlugBase::~CommonPlugBase()
+CorePlugBase::~CorePlugBase()
 {
 }
 
-void CommonPlugBase::Reset()
+void CorePlugBase::Reset()
 {
 	TRACE;
 	IMutexLock lock(this);
@@ -56,7 +56,7 @@ void CommonPlugBase::Reset()
 	}
 }
 
-void CommonPlugBase::OnParamChange(int paramIndex)
+void CorePlugBase::OnParamChange(int paramIndex)
 {
 	IMutexLock lock(this);
 
@@ -74,29 +74,29 @@ void CommonPlugBase::OnParamChange(int paramIndex)
 	}
 }
 
-void CommonPlugBase::CreatePresets()
+void CorePlugBase::CreatePresets()
 {
 	// By default, do nothing
 	// This method should be overriden when presets are implemented
 }
 
-IGraphics* CommonPlugBase::GetGraphics()
+IGraphics* CorePlugBase::GetGraphics()
 {
 	return mpGraphics;
 }
 
-void CommonPlugBase::SetBackground(int id, std::string name)
+void CorePlugBase::SetBackground(int id, std::string name)
 {
 	GetGraphics()->AttachBackground(id, name.c_str());
 }
 
-void CommonPlugBase::RegisterBitmap(int id, std::string name, int nFrames)
+void CorePlugBase::RegisterBitmap(int id, std::string name, int nFrames)
 {
 	IBitmap& bitmap = GetGraphics()->LoadIBitmap(id, name.c_str(), nFrames);
 	mBitmapRegistry[id] = bitmap;
 }
 
-void CommonPlugBase::AddParameterList(std::vector<ParameterInfo>& parameterList)
+void CorePlugBase::AddParameterList(std::vector<ParameterInfo>& parameterList)
 {
 	int nParams = parameterList.size();
 	for (int i = 0; i < nParams; i++) {
@@ -104,7 +104,7 @@ void CommonPlugBase::AddParameterList(std::vector<ParameterInfo>& parameterList)
 	}
 }
 
-void CommonPlugBase::AddParameter(ParameterInfo& param)
+void CorePlugBase::AddParameter(ParameterInfo& param)
 {
 	// First check to make sure the parameter is initialied
 	if (param.IsParam()) {
@@ -119,7 +119,7 @@ void CommonPlugBase::AddParameter(ParameterInfo& param)
 	}
 }
 
-void CommonPlugBase::RegisterProcessorList(std::vector<ModularProcessor*> processorList)
+void CorePlugBase::RegisterProcessorList(std::vector<ModularProcessor*> processorList)
 {
 	int nProcessors = processorList.size();
 	for (int i = 0; i < nProcessors; i++) {
@@ -127,20 +127,20 @@ void CommonPlugBase::RegisterProcessorList(std::vector<ModularProcessor*> proces
 	}
 }
 
-void CommonPlugBase::RegisterProcessor(ModularProcessor* processor)
+void CorePlugBase::RegisterProcessor(ModularProcessor* processor)
 {
 	processor->SetParentPlugin(this);
 	mProcessorRegistry.push_back(processor);
 }
 
-void CommonPlugBase::FinishConstruction()
+void CorePlugBase::FinishConstruction()
 {
 	AttachGraphics(GetGraphics());
 	CreatePresets();
 	ForceUpdateParameters();
 }
 
-void CommonPlugBase::AddSelectionParameter(ParameterInfo& param, IParam* pParamObj, IBitmap& bitmap)
+void CorePlugBase::AddSelectionParameter(ParameterInfo& param, IParam* pParamObj, IBitmap& bitmap)
 {
 	// Initialize the enum
 	pParamObj->InitEnum(
@@ -161,7 +161,7 @@ void CommonPlugBase::AddSelectionParameter(ParameterInfo& param, IParam* pParamO
 	}
 }
 
-void CommonPlugBase::AddNumericParameter(ParameterInfo& param, IParam* pParamObj, IBitmap& bitmap)
+void CorePlugBase::AddNumericParameter(ParameterInfo& param, IParam* pParamObj, IBitmap& bitmap)
 {
 	// Initialize the double
 	pParamObj->InitDouble(
@@ -184,7 +184,7 @@ void CommonPlugBase::AddNumericParameter(ParameterInfo& param, IParam* pParamObj
 		this, param.PosX(), param.PosY(), param.ParamIndex(), &bitmap));
 }
 
-void CommonPlugBase::AddParameterLabel(ParameterInfo& param, IParam* pParamObj, IBitmap& bitmap)
+void CorePlugBase::AddParameterLabel(ParameterInfo& param, IParam* pParamObj, IBitmap& bitmap)
 {
 	IRECT labelRect = ConstructLabelRect(param, bitmap);
 	IRECT editingRect = ConstructEditingRect(param, labelRect);
@@ -195,7 +195,7 @@ void CommonPlugBase::AddParameterLabel(ParameterInfo& param, IParam* pParamObj, 
 	GetGraphics()->AttachControl(label);
 }
 
-void CommonPlugBase::ForceUpdateParameters()
+void CorePlugBase::ForceUpdateParameters()
 {
 	int nParams = NParams();
 	for (int i = 0; i < nParams; i++) {
@@ -203,7 +203,7 @@ void CommonPlugBase::ForceUpdateParameters()
 	}
 }
 
-IRECT CommonPlugBase::ConstructLabelRect(ParameterInfo& param, IBitmap& bitmap)
+IRECT CorePlugBase::ConstructLabelRect(ParameterInfo& param, IBitmap& bitmap)
 {
 	int controlX = param.PosX();
 	int controlY = param.PosY();
@@ -221,7 +221,7 @@ IRECT CommonPlugBase::ConstructLabelRect(ParameterInfo& param, IBitmap& bitmap)
 	return IRECT(rectLeft, rectTop, rectRight, rectBottom);
 }
 
-IRECT CommonPlugBase::ConstructEditingRect(ParameterInfo& param, IRECT& labelRect)
+IRECT CorePlugBase::ConstructEditingRect(ParameterInfo& param, IRECT& labelRect)
 {
 	int width = labelRect.R - labelRect.L;
 	int sideDifference = (width - param.LabelEditWidth()) / 2;

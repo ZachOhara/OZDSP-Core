@@ -1,16 +1,14 @@
 #ifndef __TONE_MIX_PROCESSOR_H__
 #define __TONE_MIX_PROCESSOR_H__
 
-#include "IPlug_include_in_plug_hdr.h"
-
-#include "ModularProcessor.h"
+#include "../ModularProcessor.h"
 
 class ToneMixProcessor : public ModularProcessor
 {
 public:
 	enum EParameters {kMixPercentParam, kNumParams};
 
-	ToneMixProcessor(IPlugBase* pPlug);
+	ToneMixProcessor();
 	~ToneMixProcessor();
 
 	double GetAdjustedSample(double input, double output);
@@ -25,4 +23,4 @@ private:
 	double mMixFactor;
 };
 
-#endif // !__TONE_PROCESSOR_H__
+#endif // !__TONE_MIX_PROCESSOR_H__

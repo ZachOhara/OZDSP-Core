@@ -1,11 +1,11 @@
-#ifndef __COMMON_PLUG_BASE_H__
-#define __COMMON_PLUG_BASE_H__
+#ifndef __CORE_PLUG_BASE_H__
+#define __CORE_PLUG_BASE_H__
 
 #include "IPlug_include_in_plug_hdr.h"
 
+#include "ModularProcessor.h"
 #include "parameter/ParameterInfo.h"
 #include "parameter/ParameterValueLabel.h"
-#include "processing/ModularProcessor.h"
 
 #include <map>
 #include <string>
@@ -16,10 +16,10 @@
 	PLUG_UNIQUE_ID, PLUG_MFR_ID, PLUG_LATENCY, PLUG_DOES_MIDI, \
 	PLUG_DOES_STATE_CHUNKS, PLUG_IS_INST, PLUG_SC_CHANS
 
-class CommonPlugBase : public IPlug
+class CorePlugBase : public IPlug
 {
 public:
-	CommonPlugBase(
+	CorePlugBase(
 		IPlugInstanceInfo instanceInfo,
 		int nParams,
 		int nPresets,
@@ -35,7 +35,7 @@ public:
 		bool plugDoesChunks,
 		bool plugIsInst,
 		int plugAPI);
-	~CommonPlugBase();
+	~CorePlugBase();
 
 	virtual void Reset() override;
 	virtual void OnParamChange(int paramIndex) override;
@@ -81,4 +81,4 @@ private:
 	static IRECT ConstructEditingRect(ParameterInfo& param, IRECT& labelRect);
 };
 
-#endif // !__COMMON_PLUG_BASE_H__
+#endif // !__CORE_PLUG_BASE_H__

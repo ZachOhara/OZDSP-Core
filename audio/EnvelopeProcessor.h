@@ -1,9 +1,7 @@
 #ifndef __ENVELOPE_PROCESSOR_H__
 #define __ENVELOPE_PROCESSOR_H__
 
-#include "IPlug_include_in_plug_hdr.h"
-
-#include "ModularProcessor.h"
+#include "../ModularProcessor.h"
 #include "VolumeProcessor.h"
 
 #include <cmath>

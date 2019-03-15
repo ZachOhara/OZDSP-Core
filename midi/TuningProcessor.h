@@ -1,9 +1,7 @@
 #ifndef __TUNING_PROCESSOR_H__
 #define __TUNING_PROCESSOR_H__
 
-#include "IPlug_include_in_plug_hdr.h"
-
-#include "../processing/ModularProcessor.h"
+#include "../ModularProcessor.h"
 
 #define NUM_MIDI_NOTES 128
 #define NUM_KEYS 12

@@ -1,5 +1,5 @@
-#ifndef __AUDIO_PROCESSOR__H__
-#define __AUDIO_PROCESSOR__H__
+#ifndef __MODULAR_PROCESSOR__H__
+#define __MODULAR_PROCESSOR__H__
 
 #include "IPlug_include_in_plug_hdr.h"
 
@@ -36,4 +36,4 @@ private:
 	int LookupParamType(int paramIndex);
 };
 
-#endif // !__AUDIO_PROCESSOR__H__
+#endif // !__MODULAR_PROCESSOR__H__
