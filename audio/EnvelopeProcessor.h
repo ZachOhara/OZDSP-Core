@@ -21,6 +21,14 @@ public:
 	void TriggerNoteRelease();
 	bool IsNoteSilent();
 
+	double GetAttackTime();
+	double GetDecayTime();
+	double GetSustainLevel();
+	double GetReleaseTime();
+	double GetAttackExponent();
+	double GetDecayExponent();
+	double GetReleaseExponent();
+
 protected:
 	void HandleParamChange(int paramType, double newValue, int newIntValue) override;
 	void HandleHostReset() override;
