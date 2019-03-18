@@ -51,17 +51,30 @@ bool EnvelopeShapeGraphic::IsDirty()
 
 void EnvelopeShapeGraphic::CalculateOutputs(double* outputs, int nFrames)
 {
-	int segmentWidth = nFrames / 4;
-	// todo attack and decay times
+	int maxSegmentWidth = nFrames / 4;
+	// ADSR base information (all time values are normalized to [0, 1])
+	double attackTime = mpProcessor->GetParamNormalized(EnvelopeProcessor::kAttackTimeParam);
+	double decayTime = mpProcessor->GetParamNormalized(EnvelopeProcessor::kDecayTimeParam);
 	double sustainLevel = mpProcessor->GetSustainLevel();
-	// todo release time
+	double releaseTime = mpProcessor->GetParamNormalized(EnvelopeProcessor::kReleaseTimeParam);
+	// Exponents
 	double attackExponent = mpProcessor->GetAttackExponent();
 	double decayExponent = mpProcessor->GetDecayExponent();
 	double releaseExponent = mpProcessor->GetReleaseExponent();
-	CalculateSegmentOutput(outputs, 0, segmentWidth, 0.0, 1.0, attackExponent);
-	CalculateSegmentOutput(outputs, segmentWidth, segmentWidth * 2, 1.0, sustainLevel, decayExponent);
-	CalculateSegmentOutput(outputs, segmentWidth * 2, segmentWidth * 3, sustainLevel, sustainLevel, 1.0);
-	CalculateSegmentOutput(outputs, segmentWidth * 3, nFrames, sustainLevel, 0.0, releaseExponent);
+
+	// Measure segment widths
+	int attackRBound = attackTime * maxSegmentWidth;
+	int decayRBound = attackRBound + (decayTime * maxSegmentWidth);
+	int releaseLBound = nFrames - (releaseTime * maxSegmentWidth);
+
+	// Calculate the data
+	CalculateSegmentOutput(outputs, 0, attackRBound, 0.0, 1.0, attackExponent);
+	CalculateSegmentOutput(outputs, attackRBound, decayRBound, 1.0, sustainLevel, decayExponent);
+	CalculateSegmentOutput(outputs, decayRBound, releaseLBound, sustainLevel, sustainLevel, 1.0);
+	CalculateSegmentOutput(outputs, releaseLBound, nFrames, sustainLevel, 0.0, releaseExponent);
+	
+	// Correct for a display artifact caused by steep slopes
+	outputs[std::max(attackRBound, kRasterPadPx -1)] = 1.0;
 }
 
 void EnvelopeShapeGraphic::CalculateSegmentOutput(double* outputs, int segmentStart, int segmentEnd, double startOutput, double endOutput, double exponent)

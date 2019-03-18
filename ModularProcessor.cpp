@@ -48,6 +48,21 @@ void ModularProcessor::SetParentPlugin(IPlugBase* pPlug)
 	mpPlug = pPlug;
 }
 
+double ModularProcessor::GetParamValue(int paramType)
+{
+	return GetParamObject(paramType)->Value();
+}
+
+int ModularProcessor::GetParamIntValue(int paramType)
+{
+	return GetParamObject(paramType)->Int();
+}
+
+double ModularProcessor::GetParamNormalized(int paramType)
+{
+	return GetParamObject(paramType)->GetNormalized();
+}
+
 void ModularProcessor::HandleParamChange(int paramType, double newValue, int newIntValue)
 {
 	// By default, do nothing

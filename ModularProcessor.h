@@ -19,6 +19,10 @@ public:
 	void RegisterParameter(int paramIndex, int paramType);
 	void SetParentPlugin(IPlugBase* pPlug);
 
+	double GetParamValue(int paramType);
+	int GetParamIntValue(int paramType);
+	double GetParamNormalized(int paramType);
+
 protected:
 	virtual void HandleParamChange(int paramType, double newValue, int newIntValue);
 	virtual void HandleHostReset();
