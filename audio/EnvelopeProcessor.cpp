@@ -53,41 +53,6 @@ bool EnvelopeProcessor::IsNoteSilent()
 	return mCurrentSegment == kSilenceSegment;
 }
 
-double EnvelopeProcessor::GetAttackTime()
-{
-	return mAttackTime;
-}
-
-double EnvelopeProcessor::GetDecayTime()
-{
-	return mDecayTime;
-}
-
-double EnvelopeProcessor::GetSustainLevel()
-{
-	return mSustainLevel;
-}
-
-double EnvelopeProcessor::GetReleaseTime()
-{
-	return mReleaseTime;
-}
-
-double EnvelopeProcessor::GetAttackExponent()
-{
-	return mAttackExponent;
-}
-
-double EnvelopeProcessor::GetDecayExponent()
-{
-	return mDecayExponent;
-}
-
-double EnvelopeProcessor::GetReleaseExponent()
-{
-	return mReleaseExponent;
-}
-
 bool EnvelopeProcessor::IsInStationarySegment()
 {
 	return mCurrentSegment == kSilenceSegment || mCurrentSegment == kSustainSegment;

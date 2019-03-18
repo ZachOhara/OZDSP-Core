@@ -21,13 +21,7 @@ public:
 	void TriggerNoteRelease();
 	bool IsNoteSilent();
 
-	double GetAttackTime();
-	double GetDecayTime();
-	double GetSustainLevel();
-	double GetReleaseTime();
-	double GetAttackExponent();
-	double GetDecayExponent();
-	double GetReleaseExponent();
+	static double GetExponentFromShapeParameter(double shape);
 
 protected:
 	void HandleParamChange(int paramType, double newValue, int newIntValue) override;
@@ -58,8 +52,6 @@ private:
 
 	bool IsInStationarySegment();
 	void ProgressToSegment(int newSegment, double duration, double goal, double exponent);
-
-	static double GetExponentFromShapeParameter(double shape);
 };
 
 #endif // !__ENVELOPE_PROCESSOR_H__
