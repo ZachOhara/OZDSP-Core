@@ -32,6 +32,7 @@ private:
 	double* mOutputs;
 	bool* mRaster;
 	//double* mGaussRaster;
+	double* mFxaaRaster;
 
 	// TODO make this more efficient
 	bool IsDirty() override;
@@ -47,7 +48,17 @@ private:
 	void DrawCircle(bool* raster, int x0, int y0, int radius);
 	int GetOutputYPos(double output);
 
-	// void GaussBlur(bool* raster, double* gauss);
+	//void GaussBlur(bool* raster, double* gauss);
+	void AntialiasFxaa(bool* inputs, double* outputs);
+
+	inline int dim_zerobound(int n) { return (n < 0 ? 0 : n); };
+	inline int dim_widthbound(int n) { return (n >= mWidthPx ? mWidthPx - 1 : n); };
+	inline int dim_heightbound(int n) { return (n >= mHeightPx ? mHeightPx - 1 : n); };
+
+	inline double abs_dbl(double n) { return (n >= 0 ? n : -n); };
+	inline double min_dbl(double a, double b) { return (a < b ? a : b); };
+	inline double max_dbl(double a, double b) { return (a > b ? a : b); };
+	inline double getLuma(bool input) { return (input ? 1.0 : 0.0); };
 
 	void ZeroOutputs();
 	void ZeroRasters();

@@ -38,6 +38,8 @@ bool EnvelopeShapeGraphic::Draw(IGraphics* pGraphics)
 	RasterizeOutputs();
 	// apply blur
 	//GaussBlur(mRaster, mGaussRaster);
+	// Apply antialiasing
+	AntialiasFxaa(mRaster, mFxaaRaster);
 	// draw raster
 	DrawRaster(pGraphics);
 	
@@ -205,6 +207,7 @@ void EnvelopeShapeGraphic::ZeroRasters()
 	for (int i = 0; i < size; i++) {
 		mRaster[i] = false;
 		//mGaussRaster[i] = 0.0;
+		mFxaaRaster[i] = 0.0;
 	}
 }
 
@@ -221,6 +224,7 @@ void EnvelopeShapeGraphic::AllocateArrays()
 	mOutputs = new double[mWidthPx];
 	mRaster = new bool[mWidthPx * mHeightPx];
 	//mGaussRaster = new double[mWidthPx * mHeightPx];
+	mFxaaRaster = new double[mWidthPx * mHeightPx];
 }
 
 void EnvelopeShapeGraphic::DeleteArrays()
@@ -231,11 +235,69 @@ void EnvelopeShapeGraphic::DeleteArrays()
 	mRaster = nullptr;
 	//delete[] mGaussRaster;
 	//mGaussRaster = nullptr;
+	delete[] mFxaaRaster;
+	mFxaaRaster = nullptr;
 }
 
 inline int EnvelopeShapeGraphic::Index(int x, int y)
 {
 	return (x * mHeightPx) + y;
+}
+
+void EnvelopeShapeGraphic::AntialiasFxaa(bool* inputs, double* outputs)
+{
+	for (int x = 0; x < mWidthPx; x++) {
+		for (int y = 0; y < mHeightPx; y++) {
+			double lumaCenter = (inputs[Index(x, y)] ? 1.0 : 0.0);
+
+			double lumaUp = getLuma(inputs[Index(x, dim_zerobound(y-1))]);
+			double lumaDown = getLuma(inputs[Index(x, dim_heightbound(y+1))]);
+			double lumaLeft = getLuma(inputs[Index(dim_zerobound(x - 1), y)]);
+			double lumaRight = getLuma(inputs[Index(dim_widthbound(x + 1), y)]);
+
+			double minLuma = min_dbl(lumaCenter, min_dbl(
+				min_dbl(lumaUp, lumaDown), min_dbl(lumaLeft, lumaRight)));
+			double maxLuma = max_dbl(lumaCenter, max_dbl(
+				max_dbl(lumaUp, lumaDown), max_dbl(lumaLeft, lumaRight)));
+			double rangeLuma = maxLuma - minLuma;
+
+			const static double kEdgeThresholdMin = 0.312;
+			const static double kEdgeThresholdMax = 0.125;
+			if (rangeLuma < max_dbl(kEdgeThresholdMin, maxLuma * kEdgeThresholdMax)) {
+				outputs[Index(x, y)] = (inputs[Index(x, y)] ? 1.0 : 0.0);
+				continue;
+			}
+
+			double lumaDownLeft = getLuma(inputs[Index(dim_zerobound(x - 1), dim_heightbound(y + 1))]);
+			double lumaUpLeft = getLuma(inputs[Index(dim_zerobound(x - 1), dim_zerobound(y - 1))]);
+			double lumaDownRight = getLuma(inputs[Index(dim_widthbound(x + 1), dim_heightbound(y + 1))]);
+			double lumaUpRight = getLuma(inputs[Index(dim_widthbound(x + 1), dim_zerobound(y - 1))]);
+
+			double lumaDownUp = lumaDown + lumaUp;
+			double lumaLeftRight = lumaLeft + lumaRight;
+
+			double lumaLeftCorners = lumaDownLeft + lumaUpLeft;
+			double lumaRightCorners = lumaDownRight + lumaUpRight;
+			double lumaDownCorners = lumaDownLeft + lumaDownRight;
+			double lumaUpCorners = lumaUpLeft + lumaUpRight;
+
+			double edgeHorizontal = abs_dbl(-2.0 * lumaLeft + lumaLeftCorners) + abs_dbl(-2.0 * lumaCenter + lumaDownUp) * 2.0 + abs_dbl(-2.0 * lumaRight + lumaRightCorners);
+			double edgeVertical = abs_dbl(-2.0 * lumaUp + lumaUpCorners) + abs_dbl(-2.0 * lumaCenter + lumaLeftRight) * 2.0 + abs_dbl(-2.0 * lumaDown + lumaDownCorners);
+			bool isHorizontal = (edgeHorizontal >= edgeVertical);
+
+			double luma1 = isHorizontal ? lumaDown : lumaLeft;
+			double luma2 = isHorizontal ? lumaUp : lumaRight;
+			// Compute gradients in this direction.
+			double gradient1 = luma1 - lumaCenter;
+			double gradient2 = luma2 - lumaCenter;
+
+			// Which direction is the steepest ?
+			bool is1Steepest = abs_dbl(gradient1) >= abs_dbl(gradient2);
+
+			// Gradient in the corresponding direction, normalized.
+			double gradientScaled = 0.25*max_dbl(abs_dbl(gradient1), abs_dbl(gradient2));
+		}
+	}
 }
 
 /*
@@ -246,6 +308,7 @@ void EnvelopeShapeGraphic::GaussBlur(bool* raster, double* gauss)
 	
 	// Comment out one of these:
 
+	/*
 	// Sigma = 0.84
 	static const double kernel[kernelSize][kernelSize] = {
 		{0.00000067, 0.00002292, 0.00019117, 0.00038771, 0.00019117, 0.00002292, 0.00000067},
@@ -256,6 +319,7 @@ void EnvelopeShapeGraphic::GaussBlur(bool* raster, double* gauss)
 		{0.00002292, 0.00078633, 0.00655965, 0.01330373, 0.00655965, 0.00078633, 0.00002292},
 		{0.00000067, 0.00002292, 0.00019117, 0.00038771, 0.00019117, 0.00002292, 0.00000067},
 	};
+	
 	
 	// Sigma = 3.0
 	static const double kernel[kernelSize][kernelSize] = {
@@ -289,7 +353,7 @@ void EnvelopeShapeGraphic::GaussBlur(bool* raster, double* gauss)
 		}
 	}
 }
-*/
+//*/
 
 /*
 
