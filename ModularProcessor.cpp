@@ -3,7 +3,9 @@
 ModularProcessor::ModularProcessor(int nParams)
 {
 	mSampleRate = 1.0; // prevents division by zero errors in subclasses
-	mParamIndicies.resize(nParams);
+	for (int i = 0; i < nParams; i++) {
+		mParamIndicies.push_back(-1);
+	}
 }
 
 ModularProcessor::~ModularProcessor()
