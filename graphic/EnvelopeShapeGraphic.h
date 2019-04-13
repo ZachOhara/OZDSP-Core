@@ -5,6 +5,7 @@
 
 #include "../audio/EnvelopeProcessor.h"
 
+#include <algorithm>
 #include <utility>
 
 class EnvelopeShapeGraphic : public IControl

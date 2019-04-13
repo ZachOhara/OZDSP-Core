@@ -8,21 +8,10 @@ ParameterInfo::~ParameterInfo()
 {
 }
 
-ParameterInfo& ParameterInfo::MakeEnvelopeAttackTimeParam()
+ParameterInfo& ParameterInfo::MakeEnvelopeTimeParam()
 {
 	static const double min_s = 0.001;
-	static const double max_s = 3.0;
-	static const double default_s = 0.001;
-	static const double step_s = 0.001;
-	return (*this)
-		.InitNumericParam(default_s, min_s, max_s, step_s, "s")
-		.SetValueShapeFactor(4.0);
-}
-
-ParameterInfo& ParameterInfo::MakeEnvelopeDecayTimeParam()
-{
-	static const double min_s = 0.001;
-	static const double max_s = 3.0;
+	static const double max_s = 2.0;
 	static const double default_s = 0.001;
 	static const double step_s = 0.001;
 	return (*this)

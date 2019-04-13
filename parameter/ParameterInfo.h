@@ -11,8 +11,7 @@ public:
 	~ParameterInfo();
 
 	// Common parameter types
-	ParameterInfo& MakeEnvelopeAttackTimeParam();
-	ParameterInfo& MakeEnvelopeDecayTimeParam();
+	ParameterInfo& MakeEnvelopeTimeParam();
 	ParameterInfo& MakeEnvelopeShapeParam();
 	ParameterInfo& MakeFrequencyParam();
 	ParameterInfo& MakePercentageParam(double defaultValue = 100.0);

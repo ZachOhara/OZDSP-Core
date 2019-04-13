@@ -17,6 +17,9 @@ double EnvelopeProcessor::GetAdjustedSample(double sample)
 		double scaledProgress = pow(progress, mSegmentExponent);
 		double currentDelta = scaledProgress * mSegmentDifference;
 		mCurrentOutput = currentDelta + mSegmentInitialOutput;
+		if (mCurrentOutput == 0) {
+			GetExponentFromShapeParameter(0.0);
+		}
 		mVolumeProcessor.SetLoudness(mCurrentOutput);
 		// Update sample count and (possibly) progress the segment
 		mRemainingSamples--;
