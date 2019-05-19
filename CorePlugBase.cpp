@@ -154,7 +154,7 @@ void CorePlugBase::AddSelectionParameter(ParameterInfo& param, IParam* pParamObj
 
 	// Initialize graphics
 	if (param.IsSelectionDropdown()) {
-		// TODO: dropdown
+		// TODO: dropdown selections
 	} else {
 		GetGraphics()->AttachControl(new ISwitchControl(
 			this, param.PosX(), param.PosY(), param.ParamIndex(), &bitmap));

@@ -18,13 +18,17 @@ double EnvelopeProcessor::GetAdjustedSample(double sample)
 		double currentDelta = scaledProgress * mSegmentDifference;
 		mCurrentOutput = currentDelta + mSegmentInitialOutput;
 		if (mCurrentOutput == 0) {
+			// TODO find out what this does
 			GetExponentFromShapeParameter(0.0);
 		}
 		mVolumeProcessor.SetLoudness(mCurrentOutput);
-		// Update sample count and (possibly) progress the segment
+		// Update sample count
 		mRemainingSamples--;
+		// Progress the segment
 		if (mRemainingSamples == 0) {
 			switch (mCurrentSegment) {
+				// no case is necessary for silence or sustains, since these will
+				// be progressed by external events (note attacks and releases)
 			case kAttackSegment:
 				ProgressToSegment(kDecaySegment, mDecayTime, mSustainLevel, mDecayExponent);
 				break;
@@ -116,8 +120,8 @@ void EnvelopeProcessor::HandleHostReset()
 
 double EnvelopeProcessor::GetExponentFromShapeParameter(double shape)
 {
-	// shape is a value ranging on [-x, x] for some x
-	// we want to convert it to an exponent
+	// shape is a linear value ranging on [-x, x] for some x
+	// we want to convert it to an exponent on [1/x, x+1]
 	if (shape >= 0) {
 		return shape + 1;
 	}

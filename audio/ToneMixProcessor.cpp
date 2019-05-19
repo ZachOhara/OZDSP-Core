@@ -12,7 +12,7 @@ ToneMixProcessor::~ToneMixProcessor()
 
 double ToneMixProcessor::GetAdjustedSample(double input, double output)
 {
-	return (output * mMixFactor) + (input * (1.0 - mMixFactor));
+	return (input * mMixFactor) + (input * (1.0 - mMixFactor));
 }
 
 void ToneMixProcessor::SetMixPercent(double mixPercent)

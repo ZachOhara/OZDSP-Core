@@ -34,4 +34,3 @@ private:
 };
 
 #endif __VOLUME_PROCESSOR_H__
-

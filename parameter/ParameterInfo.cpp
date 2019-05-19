@@ -65,7 +65,7 @@ ParameterInfo& ParameterInfo::MakeVolumeReductionParam()
 	 * between amplitude and decibels. This particular value is the shape that makes
 	 * the loudness of a decibel knob seem linear (e.g. if the knob is turned halfway,
 	 * the resulting signal should *sound* half as loud). Note that this *is* affected
-	 * by whatever the minimum decibel value is.
+	 * by whatever the control's minimum decibel value is.
 	 */
 }
 
