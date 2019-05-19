@@ -2,7 +2,7 @@
 
 MidiStackReciever::MidiStackReciever()
 {
-	mNoteIdStack.emplace(-1); // -1 is for no notes pressed
+	//mNoteIdStack.emplace(-1); // -1 is for no notes pressed
 
 	for (int i = 0; i < NUM_MIDI_NOTES; i++) {
 		mNoteStatus[i] = kNoteInactive;
@@ -27,7 +27,8 @@ void MidiStackReciever::FlushBlock(int nFrames)
 void MidiStackReciever::AdvanceSample(std::queue<MidiEvent>* eventQueue)
 {
 	// cache the current note
-	int lastSoundingNoteId = mNoteIdStack.top();
+	//int lastSoundingNoteId = mNoteIdStack.top();
+	int lastSoundingNoteId = FindLastSoundingNote();
 
 	// search the messages
 	while (!mMidiQueue.Empty() && mMidiQueue.Peek()->mOffset <= mSampleOffset) {
@@ -47,7 +48,7 @@ void MidiStackReciever::AdvanceSample(std::queue<MidiEvent>* eventQueue)
 	}
 
 	// Find out what changed and queue it
-	int newSoundingNoteId = mNoteIdStack.top();
+	int newSoundingNoteId = FindLastSoundingNote();
 
 	if (lastSoundingNoteId != newSoundingNoteId) {
 		MidiEvent statusEvent;
@@ -72,14 +73,49 @@ void MidiStackReciever::AdvanceSample(std::queue<MidiEvent>* eventQueue)
 void MidiStackReciever::HandleNoteOn(int noteId)
 {
 	mNoteStatus[noteId] = kNotePressed;
-	mNoteIdStack.emplace(noteId);
+	//mNoteIdStack.emplace(noteId);
+	ShiftNoteOrderBack();
+	mOrderPressed[noteId] = 1;
 }
 
 void MidiStackReciever::HandleNoteOff(int noteId)
 {
 	mNoteStatus[noteId] = kNoteInactive;
 
+	/*
 	while (mNoteIdStack.top() >= 0 && mNoteStatus[mNoteIdStack.top()] == kNoteInactive) {
 		mNoteIdStack.pop();
+	}
+	*/
+	ShiftNoteOrderForward(noteId);
+}
+
+int MidiStackReciever::FindLastSoundingNote()
+{
+	for (int i = 0; i < NUM_MIDI_NOTES; i++) {
+		if (mOrderPressed[i] == 1) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+void MidiStackReciever::ShiftNoteOrderBack()
+{
+	for (int i = 0; i < NUM_MIDI_NOTES; i++) {
+		if (mOrderPressed[i] >= 1) {
+			mOrderPressed[i] += 1;
+		}
+	}
+}
+
+void MidiStackReciever::ShiftNoteOrderForward(int releasedNoteId)
+{
+	int releaseIndex = mOrderPressed[releasedNoteId];
+	mOrderPressed[releasedNoteId] = 0;
+	for (int i = 0; i < NUM_MIDI_NOTES; i++) {
+		if (mOrderPressed[i] > releaseIndex) {
+			mOrderPressed[i] -= 1;
+		}
 	}
 }

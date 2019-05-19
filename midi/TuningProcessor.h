@@ -3,6 +3,8 @@
 
 #include "../ModularProcessor.h"
 
+#include <cmath>
+
 #define NUM_MIDI_NOTES 128
 #define NUM_KEYS 12
 
