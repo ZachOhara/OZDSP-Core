@@ -6,7 +6,6 @@
 
 #include "TuningProcessor.h"
 
-//#include <stack>
 #include <queue>
 
 enum MidiNoteState
@@ -41,7 +40,6 @@ private:
 	IMidiQueue mMidiQueue;
 
 	int mOrderPressed[NUM_MIDI_NOTES];
-	//std::stack<int> mNoteIdStack;
 	int mNoteStatus[NUM_MIDI_NOTES];
 
 	int mSampleOffset = 0;
