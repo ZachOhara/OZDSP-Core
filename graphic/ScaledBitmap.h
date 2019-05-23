@@ -3,6 +3,8 @@
 
 #include "IPlug_include_in_plug_hdr.h"
 
+#include <cmath>
+
 class ScaledBitmap
 {
 public:
@@ -13,7 +15,8 @@ public:
 	IBitmap& GetIBitmap();
 
 	// Drawing methods
-	void FillColor(int r, int g, int b, int a);
+	void BucketFill(int color);
+	void FillCircle(int x0, int y0, int radius, int color);
 
 //private:
 	const int mOutputWidthPx;

@@ -19,7 +19,8 @@ ScaledBitmap::~ScaledBitmap()
 
 void ScaledBitmap::Erase()
 {
-	FillColor(255, 0, 0, 255);
+	BucketFill(LICE_RGBA(0, 0, 0, 0));
+	FillCircle(100, 50, 4, 0xff4caf50);
 }
 
 IBitmap& ScaledBitmap::GetIBitmap()
@@ -28,20 +29,34 @@ IBitmap& ScaledBitmap::GetIBitmap()
 	return mOutputBitmap;
 }
 
-void ScaledBitmap::FillColor(int r, int g, int b, int a)
+void ScaledBitmap::BucketFill(int color)
 {
-	LICE_pixel pixel = LICE_RGBA(r, g, b, a);
 	int size = ImageSize();
 	for (int i = 0; i < size; i++) {
-		mPixelData[i] = pixel;
+		mPixelData[i] = color;
 	}
-	/*
-	for (int x = 0; x < mWidthPx; x++) {
-		for (int y = 0; y < mHeightPx; y++) {
-			mPixelData[Index(x, y)] = LICE_RGBA(r, g, b, a);
+}
+
+void ScaledBitmap::FillCircle(int x0, int y0, int radius, int color)
+{
+	x0 *= mScaleFactor;
+	y0 *= mScaleFactor;
+	radius *= mScaleFactor;
+
+	int centerIndex = Index(x0, y0);
+
+	for (int dx = 0; dx <= radius; dx++) {
+		int dy = (int) round(radius * sin(acos(((double)dx) / ((double)radius))));
+
+		int col1 = x0 - dx;
+		int col2 = x0 + dx + 1;
+		int row = mWidthPx * (y0 - dy);
+		for (int i = 0; i < 2 * dy; i++) {
+			mPixelData[row + col1] = color;
+			mPixelData[row + col2] = color;
+			row += mWidthPx;
 		}
 	}
-	*/
 }
 
 void ScaledBitmap::ResizeImage()
@@ -59,10 +74,10 @@ void ScaledBitmap::ResizeImage()
 
 			// Closest pixels
 			int srcIndex = Index(srcX, srcY);
-			int centerPx = (int)mPixelData[srcIndex];
-			int rightPx = (int)mPixelData[srcIndex + 1];
-			int downPx = (int)mPixelData[srcIndex + mWidthPx];
-			int cornerPx = (int)mPixelData[srcIndex + mWidthPx + 1];
+			int centerPx = mPixelData[srcIndex];
+			int rightPx = mPixelData[srcIndex + 1];
+			int downPx = mPixelData[srcIndex + mWidthPx];
+			int cornerPx = mPixelData[srcIndex + mWidthPx + 1];
 
 			// Calculate components
 			int outputPx = 0;
