@@ -40,6 +40,7 @@ bool EnvelopeShapeGraphic::Draw(IGraphics* pGraphics)
 	//DrawRaster(pGraphics);
 
 	// Experimental code:
+	/*
 	LICE_pixel* pixels = new LICE_pixel[mWidthPx * mHeightPx];
 	
 	for (int y = 0; y < mHeightPx; y++) {
@@ -51,6 +52,9 @@ bool EnvelopeShapeGraphic::Draw(IGraphics* pGraphics)
 		}
 
 	}
+	*/
+
+	// VERY old code
 	/*
 	for (int i = 0; i < mWidthPx * mHeightPx; i++) {
 		if (mWidthPx * mHeightPx - i < 50)
@@ -58,6 +62,7 @@ bool EnvelopeShapeGraphic::Draw(IGraphics* pGraphics)
 	}
 	*/
 	
+	/*
 	int scW = mWidthPx / 4;
 	int scH = mHeightPx / 4;
 
@@ -67,15 +72,26 @@ bool EnvelopeShapeGraphic::Draw(IGraphics* pGraphics)
 	LICE_WrapperBitmap wrapper = LICE_WrapperBitmap(bilinear, scW, scH, scW, false);
 
 	IBitmap result(&wrapper, mWidthPx, mHeightPx);
+	*/
+
+	ScaledBitmap scb(mWidthPx, mHeightPx, 4.0);
+	scb.Erase();
+	IBitmap& result = scb.GetIBitmap();
+
+	/*
+	scb.ResizeImage();
+	LICE_WrapperBitmap wrapper = LICE_WrapperBitmap(scb.mOutputData, mWidthPx, mHeightPx, mWidthPx, false);
+	IBitmap result(&wrapper, mWidthPx, mHeightPx);
+	*/
 
 	IRECT resized(mInnerRect.L, mInnerRect.T,
 		mInnerRect.L + (mInnerRect.W() / 4),
 		mInnerRect.T + (mInnerRect.H() / 4));
 
-	pGraphics->DrawBitmap(&result, &resized);
+	pGraphics->DrawBitmap(&result, &mInnerRect);
 
-	delete[] pixels;
-	delete[] bilinear;
+	//delete[] pixels;
+	//delete[] bilinear;
 	
 	return true;
 }

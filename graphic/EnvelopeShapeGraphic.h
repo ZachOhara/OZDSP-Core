@@ -4,6 +4,7 @@
 #include "IPlug_include_in_plug_hdr.h"
 
 #include "../audio/EnvelopeProcessor.h"
+#include "../graphic/ScaledBitmap.h"
 
 #include <algorithm>
 #include <utility>
