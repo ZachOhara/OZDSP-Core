@@ -9,8 +9,6 @@
 #include <algorithm>
 #include <utility>
 
-int* resizeBilinear(int* pixels, int w1, int h1, int w2, int h2);
-
 class EnvelopeShapeGraphic : public IControl
 {
 public:
@@ -34,7 +32,6 @@ private:
 	int mHeightPx;
 
 	double* mOutputs;
-	bool* mRaster;
 
 	// TODO make this more efficient
 	bool IsDirty() override;
@@ -42,22 +39,16 @@ private:
 	void CalculateOutputs(double* outputs, int nFrames);
 	void CalculateSegmentOutput(double* outputs, int segmentStart, int segmentEnd,
 		double startOutput, double endOutput, double exponent);
-	void RasterizeOutputs();
-	void DrawRaster(IGraphics* pGraphics);
+	void RasterizeOutputs(ScaledBitmap& scb);
 
-	void DrawThickVerticalLine(bool* raster, int x, int y0, int y1, int radius);
-	void FillCircle(bool* raster, int x0, int y0, int radius);
-	void DrawCircle(bool* raster, int x0, int y0, int radius);
+	void DrawThickVerticalLine(ScaledBitmap& scb, int x, int y0, int y1, int radius);
 	int GetOutputYPos(double output);
 
 	void ZeroOutputs();
-	void ZeroRasters();
 
 	void InitDimensions();
 	void AllocateArrays();
 	void DeleteArrays();
-
-	inline int Index(int x, int y);
 };
 
 #endif // !__ENVELOPE_SHAPE_GRAPHIC_H__

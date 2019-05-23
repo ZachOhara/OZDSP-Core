@@ -20,7 +20,7 @@ ScaledBitmap::~ScaledBitmap()
 void ScaledBitmap::Erase()
 {
 	BucketFill(LICE_RGBA(0, 0, 0, 0));
-	FillCircle(100, 50, 4, 0xff4caf50);
+	//FillCircle(100, 50, 4, 0xff4caf50);
 }
 
 IBitmap& ScaledBitmap::GetIBitmap()
