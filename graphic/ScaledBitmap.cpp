@@ -65,40 +65,17 @@ void ScaledBitmap::ResizeImage()
 			int cornerPx = (int)mPixelData[srcIndex + mWidthPx + 1];
 
 			// Calculate components
-			int channels[4]; // {blue, green, red, alpha}
-			for (int i = 0; i < 4; i++) {
-				int shift = i * 8;
-				channels[i] = (((centerPx >> shift) & 0xff) * (1 - dx) * (1 - dy))
+			int outputPx = 0;
+			for (int shift = 0; shift <= 24; shift += 8) {
+				int channel = (((centerPx >> shift) & 0xff) * (1 - dx) * (1 - dy))
 					+ (((rightPx >> shift) & 0xff) * (dx) * (1 - dy))
 					+ (((downPx >> shift) & 0xff) * (1 - dx) * (dy))
 					+ (((cornerPx >> shift) & 0xff) * (dx) * (dy));
+				outputPx += channel << shift;
 			}
 
-			/*
-			int blue = ((centerPx & 0xff) * (1 - dx) * (1 - dy))
-				+ ((rightPx & 0xff) * (dx) * (1 - dy))
-				+ ((downPx & 0xff) * (1 - dx) * (dy))
-				+ ((cornerPx & 0xff) * (dx) * (dy));
-
-			int green = (((centerPx >> 8) & 0xff) * (1 - dx) * (1 - dy))
-				+ (((rightPx >> 8) & 0xff) * (dx) * (1 - dy))
-				+ (((downPx >> 8) & 0xff) * (1 - dx) * (dy))
-				+ (((cornerPx >> 8) & 0xff) * (dx) * (dy));
-
-			int red = (((centerPx >> 16) & 0xff) * (1 - dx) * (1 - dy))
-				+ (((rightPx >> 16) & 0xff) * (dx) * (1 - dy))
-				+ (((downPx >> 16) & 0xff) * (1 - dx) * (dy))
-				+ (((cornerPx >> 16) & 0xff) * (dx) * (dy));
-
-			int alpha = (((centerPx >> 24) & 0xff) * (1 - dx) * (1 - dy))
-				+ (((rightPx >> 24) & 0xff) * (dx) * (1 - dy))
-				+ (((downPx >> 24) & 0xff) * (1 - dx) * (dy))
-				+ (((cornerPx >> 24) & 0xff) * (dx) * (dy));
-			*/
-
 			// Re-assemble
-			//mOutputData[outputIndex] = LICE_RGBA(red, green, blue, alpha);
-			mOutputData[outputIndex] = LICE_RGBA(channels[2], channels[1], channels[0], channels[3]);
+			mOutputData[outputIndex] = outputPx;
 			outputIndex++;
 		}
 	}
