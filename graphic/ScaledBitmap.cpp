@@ -29,6 +29,16 @@ IBitmap& ScaledBitmap::GetIBitmap()
 	return mOutputBitmap;
 }
 
+int ScaledBitmap::GetWidth()
+{
+	return 0;
+}
+
+int ScaledBitmap::GetHeight()
+{
+	return 0;
+}
+
 void ScaledBitmap::BucketFill(int color)
 {
 	int size = ImageSize();
@@ -37,7 +47,7 @@ void ScaledBitmap::BucketFill(int color)
 	}
 }
 
-void ScaledBitmap::FillCircle(int x0, int y0, int radius, int color)
+void ScaledBitmap::FillCircle(double x0, double y0, double radius, int color)
 {
 	x0 *= mScaleFactor;
 	y0 *= mScaleFactor;

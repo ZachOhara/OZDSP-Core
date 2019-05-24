@@ -2,11 +2,12 @@
 
 EnvelopeShapeGraphic::EnvelopeShapeGraphic(IPlugBase* pPlug, EnvelopeProcessor* pProcessor, IRECT rect) :
 	IControl(pPlug, rect),
-	mColor(0xFF, 0x4C, 0xAF, 0x50)
+	mColor(0xff4caf50),
+	mBitmap(rect.W(), rect.H(), kScaleFactor),
+	nOutputFrames((rect.W() - (2 * kBoxPadPx)) * kScaleFactor)
 {
 	mpProcessor = pProcessor;
-	InitDimensions();
-	AllocateArrays();
+	AllocateArray();
 }
 EnvelopeShapeGraphic::~EnvelopeShapeGraphic()
 {
@@ -15,21 +16,13 @@ EnvelopeShapeGraphic::~EnvelopeShapeGraphic()
 
 bool EnvelopeShapeGraphic::Draw(IGraphics* pGraphics)
 {
-	// zero outputs
-	ZeroOutputs();
-	// calculate outputs
-	CalculateOutputs(mOutputs, mWidthPx);
+	CalculateOutputs(mOutputs, nOutputFrames);
 
+	mBitmap.Erase();
 
-	static ScaledBitmap scb(mWidthPx, mHeightPx, 16.0);
-	scb.Erase();
+	RasterizeOutputs();
 
-	// rasterize outputs
-	RasterizeOutputs(scb);
-
-	IBitmap& result = scb.GetIBitmap();
-
-	pGraphics->DrawBitmap(&result, &mInnerRect);
+	pGraphics->DrawBitmap(&mBitmap.GetIBitmap(), GetRECT());
 	
 	return true;
 }
@@ -41,34 +34,31 @@ bool EnvelopeShapeGraphic::IsDirty()
 
 void EnvelopeShapeGraphic::CalculateOutputs(double* outputs, int nFrames)
 {
-	try {
-		int maxSegmentWidth = nFrames / 4;
-		// Current state information (all time values are normalized to [0, 1])
-		double attackTime = mpProcessor->GetParamNormalized(EnvelopeProcessor::kAttackTimeParam);
-		double decayTime = mpProcessor->GetParamNormalized(EnvelopeProcessor::kDecayTimeParam);
-		double sustainLevel = mpProcessor->GetParamNormalized(EnvelopeProcessor::kSustainLevelParam);
-		double releaseTime = mpProcessor->GetParamNormalized(EnvelopeProcessor::kReleaseTimeParam);
-		double attackExponent = EnvelopeProcessor::GetExponentFromShapeParameter(
-			mpProcessor->GetParamValue(EnvelopeProcessor::kAttackShapeParam));
-		double decayExponent = EnvelopeProcessor::GetExponentFromShapeParameter(
-			mpProcessor->GetParamValue(EnvelopeProcessor::kDecayShapeParam));
-		double releaseExponent = EnvelopeProcessor::GetExponentFromShapeParameter(
-			mpProcessor->GetParamValue(EnvelopeProcessor::kReleaseShapeParam));
+	int maxSegmentWidth = (nFrames - 2) / 4; // -2 because the first and last frames must be zero
+	// Current state information (all time values are normalized to [0, 1])
+	double attackTime = mpProcessor->GetParamNormalized(EnvelopeProcessor::kAttackTimeParam);
+	double decayTime = mpProcessor->GetParamNormalized(EnvelopeProcessor::kDecayTimeParam);
+	double sustainLevel = mpProcessor->GetParamNormalized(EnvelopeProcessor::kSustainLevelParam);
+	double releaseTime = mpProcessor->GetParamNormalized(EnvelopeProcessor::kReleaseTimeParam);
+	double attackExponent = EnvelopeProcessor::GetExponentFromShapeParameter(
+		mpProcessor->GetParamValue(EnvelopeProcessor::kAttackShapeParam));
+	double decayExponent = EnvelopeProcessor::GetExponentFromShapeParameter(
+		mpProcessor->GetParamValue(EnvelopeProcessor::kDecayShapeParam));
+	double releaseExponent = EnvelopeProcessor::GetExponentFromShapeParameter(
+		mpProcessor->GetParamValue(EnvelopeProcessor::kReleaseShapeParam));
 
-		// Measure segment widths
-		int attackRBound = attackTime * maxSegmentWidth;
-		int decayRBound = attackRBound + (decayTime * maxSegmentWidth);
-		int releaseLBound = nFrames - (releaseTime * maxSegmentWidth);
+	// Measure segment widths
+	int attackRBound = 1 + (attackTime * maxSegmentWidth);
+	int decayRBound = attackRBound + (decayTime * maxSegmentWidth);
+	int releaseLBound = nFrames - 1 - (releaseTime * maxSegmentWidth);
 
-		// Calculate the data
-		CalculateSegmentOutput(outputs, 0, attackRBound, 0.0, 1.0, attackExponent);
-		CalculateSegmentOutput(outputs, attackRBound, decayRBound, 1.0, sustainLevel, decayExponent);
-		CalculateSegmentOutput(outputs, decayRBound, releaseLBound, sustainLevel, sustainLevel, 1.0);
-		CalculateSegmentOutput(outputs, releaseLBound, nFrames, sustainLevel, 0.0, releaseExponent);
-
-		// Correct for a display artifact caused by steep slopes
-		outputs[std::max(attackRBound, kRasterPadPx - 1)] = 1.0;
-	} catch (std::exception& e) {}
+	// Calculate the data
+	outputs[0] = 0;
+	CalculateSegmentOutput(outputs, 1, attackRBound, 0.0, 1.0, attackExponent);
+	CalculateSegmentOutput(outputs, attackRBound, decayRBound, 1.0, sustainLevel, decayExponent);
+	CalculateSegmentOutput(outputs, decayRBound, releaseLBound, sustainLevel, sustainLevel, 1.0);
+	CalculateSegmentOutput(outputs, releaseLBound, nFrames - 1, sustainLevel, 0.0, releaseExponent);
+	outputs[nFrames - 1] = 0;
 }
 
 void EnvelopeShapeGraphic::CalculateSegmentOutput(double* outputs, int segmentStart, int segmentEnd, double startOutput, double endOutput, double exponent)
@@ -84,64 +74,33 @@ void EnvelopeShapeGraphic::CalculateSegmentOutput(double* outputs, int segmentSt
 	}
 }
 
-void EnvelopeShapeGraphic::RasterizeOutputs(ScaledBitmap& scb)
+void EnvelopeShapeGraphic::RasterizeOutputs()
 {
-	int paddedBoundL = kRasterPadPx;
-	int paddedBoundR = mWidthPx - kRasterPadPx;
-
-	int outputFloor = GetOutputYPos(0.0) - 1;
-	// Draw the left bound
-	int firstLeftOutput = GetOutputYPos(mOutputs[paddedBoundL - 1]);
-	DrawThickVerticalLine(scb, paddedBoundL - 1, outputFloor,
-		firstLeftOutput, kLineRadius);
-	// Draw the right bound
-	int lastRightOutput = GetOutputYPos(mOutputs[paddedBoundR - 1]);
-	int rightOutputFloor = std::max(outputFloor, lastRightOutput);
-	// the above line corrects for an artifact that happens when sustain level is zero
-	DrawThickVerticalLine(scb, paddedBoundR, lastRightOutput,
-		rightOutputFloor, kLineRadius);
-
-	// Draw the rest of the shape
-	int lastY = GetOutputYPos(mOutputs[paddedBoundL - 1]);
-	for (int x = paddedBoundL; x < paddedBoundR; x++) {
-		int y = GetOutputYPos(mOutputs[x]);
-		DrawThickVerticalLine(scb, x, lastY, y, kLineRadius);
+	int drawWidth = GetRECT()->W() - (2 * kBoxPadPx);
+	int drawHeight = GetRECT()->H() - (2 * kBoxPadPx);
+	double lastY = kBoxPadPx + ((1 - mOutputs[0]) * drawHeight);
+	for (int i = 1; i < nOutputFrames; i++) {
+		double progress = ((double)i) / nOutputFrames;
+		double x = kBoxPadPx + (progress * drawWidth);
+		double y = kBoxPadPx + ((1 - mOutputs[i]) * drawHeight);
+		
+		DrawThickVerticalLine(x, lastY, y, kLineWidth);
 		lastY = y;
 	}
 }
 
-void EnvelopeShapeGraphic::DrawThickVerticalLine(ScaledBitmap& scb, int x, int y0, int y1, int radius)
+void EnvelopeShapeGraphic::DrawThickVerticalLine(double x, double y0, double y1, double radius)
 {
-	if (y1 < y0)
+	if (y0 > y1)
 		std::swap(y0, y1);
 	for (int y = y0; y <= y1; y++) {
-		scb.FillCircle(x, y, radius, 0xff4caf50);
+		mBitmap.FillCircle(x, y, radius, mColor);
 	}
 }
 
-int EnvelopeShapeGraphic::GetOutputYPos(double output)
+void EnvelopeShapeGraphic::AllocateArray()
 {
-	return ((1.0 - output) * (mHeightPx - (2 * kRasterPadPx))) + kRasterPadPx;
-}
-
-void EnvelopeShapeGraphic::ZeroOutputs()
-{
-	for (int i = 0; i < mWidthPx; i++) {
-		mOutputs[i] = 0;
-	}
-}
-
-void EnvelopeShapeGraphic::InitDimensions()
-{
-	mInnerRect = IRECT(GetRECT()->L + kInnerPadPx, GetRECT()->T + kInnerPadPx,
-		GetRECT()->R - kInnerPadPx, GetRECT()->B - kInnerPadPx);
-	mWidthPx = mInnerRect.R - mInnerRect.L;
-	mHeightPx = mInnerRect.B - mInnerRect.T;
-}
-
-void EnvelopeShapeGraphic::AllocateArrays()
-{
-	mOutputs = new double[mWidthPx];
+	mOutputs = new double[nOutputFrames];
 }
 
 void EnvelopeShapeGraphic::DeleteArrays()

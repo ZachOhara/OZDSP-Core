@@ -8,17 +8,20 @@
 class ScaledBitmap
 {
 public:
-	ScaledBitmap(int width, int height, double scaleFactor = 4.0);
+	ScaledBitmap(int width, int height, double scaleFactor);
 	~ScaledBitmap();
 
 	void Erase();
 	IBitmap& GetIBitmap();
 
+	int GetWidth();
+	int GetHeight();
+
 	// Drawing methods
 	void BucketFill(int color);
-	void FillCircle(int x0, int y0, int radius, int color);
+	void FillCircle(double x0, double y0, double radius, int color);
 
-//private:
+private:
 	const int mOutputWidthPx;
 	const int mOutputHeightPx;
 	const int mWidthPx;

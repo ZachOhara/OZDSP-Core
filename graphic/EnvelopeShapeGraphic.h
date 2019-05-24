@@ -18,20 +18,17 @@ public:
 	bool Draw(IGraphics* pGraphics) override;
 
 private:
-	static const int kInnerPadPx = 3;
-	// These two should be linked
-	static const int kLineRadius = 2;
-	static const int kRasterPadPx = 2;
+	const int kBoxPadPx = 3;
+	const double kScaleFactor = 4.0;
+	const  double kLineWidth = 1.5;
 
-	IColor mColor;
+	ScaledBitmap mBitmap;
+	int mColor;
 
 	EnvelopeProcessor* mpProcessor;
 
-	IRECT mInnerRect;
-	int mWidthPx;
-	int mHeightPx;
-
 	double* mOutputs;
+	int nOutputFrames;
 
 	// TODO make this more efficient
 	bool IsDirty() override;
@@ -39,15 +36,11 @@ private:
 	void CalculateOutputs(double* outputs, int nFrames);
 	void CalculateSegmentOutput(double* outputs, int segmentStart, int segmentEnd,
 		double startOutput, double endOutput, double exponent);
-	void RasterizeOutputs(ScaledBitmap& scb);
+	void RasterizeOutputs();
 
-	void DrawThickVerticalLine(ScaledBitmap& scb, int x, int y0, int y1, int radius);
-	int GetOutputYPos(double output);
+	void DrawThickVerticalLine(double x, double y0, double y1, double radius);
 
-	void ZeroOutputs();
-
-	void InitDimensions();
-	void AllocateArrays();
+	void AllocateArray();
 	void DeleteArrays();
 };
 
