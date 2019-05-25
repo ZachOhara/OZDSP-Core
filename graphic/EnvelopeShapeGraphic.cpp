@@ -2,7 +2,7 @@
 
 EnvelopeShapeGraphic::EnvelopeShapeGraphic(IPlugBase* pPlug, EnvelopeProcessor* pProcessor, IRECT rect) :
 	IControl(pPlug, rect),
-	mColor(0xff4caf50),
+	mColor(0xff00c853),
 	mBitmap(rect.W(), rect.H(), kScaleFactor),
 	nOutputFrames((rect.W() - (2 * kBoxPadPx)) * kScaleFactor)
 {

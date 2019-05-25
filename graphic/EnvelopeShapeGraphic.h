@@ -20,7 +20,7 @@ public:
 private:
 	const int kBoxPadPx = 3;
 	const double kScaleFactor = 4.0;
-	const  double kLineWidth = 1.5;
+	const  double kLineWidth = 1.0;
 
 	ScaledBitmap mBitmap;
 	int mColor;
