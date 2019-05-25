@@ -34,6 +34,9 @@ private:
 	IBitmap mOutputBitmap;
 
 	void ResizeImage();
+	inline int ResampleBilinear(int srcX, int srcY, double dx, double dy);
+	inline int ResampleBicubic(int srcX, int srcY, double dx, double dy);
+	static inline double InterpolateCubic(double a, double b, double c, double d, double t);
 
 	void AllocateArrays();
 	void DeleteArrays();
