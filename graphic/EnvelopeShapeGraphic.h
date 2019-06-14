@@ -4,7 +4,7 @@
 #include "IPlug_include_in_plug_hdr.h"
 
 #include "../audio/EnvelopeProcessor.h"
-#include "../graphic/ScaledBitmap.h"
+#include "../graphic/AlphaMaskBitmap.h"
 
 #include <algorithm>
 #include <utility>
@@ -19,10 +19,9 @@ public:
 
 private:
 	const int kBoxPadPx = 3;
-	const double kScaleFactor = 4.0;
-	const  double kLineWidth = 1.0;
+	const int kLineWidth = 1;
 
-	ScaledBitmap mBitmap;
+	AlphaMaskBitmap mBitmap;
 	int mColor;
 
 	EnvelopeProcessor* mpProcessor;
@@ -37,8 +36,6 @@ private:
 	void CalculateSegmentOutput(double* outputs, int segmentStart, int segmentEnd,
 		double startOutput, double endOutput, double exponent);
 	void RasterizeOutputs();
-
-	void DrawThickVerticalLine(double x, double y0, double y1, double radius);
 
 	void AllocateArray();
 	void DeleteArrays();

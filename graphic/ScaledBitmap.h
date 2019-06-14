@@ -4,6 +4,8 @@
 #include "IPlug_include_in_plug_hdr.h"
 
 #include <cmath>
+#include <algorithm>
+#include <minmax.h>
 
 class ScaledBitmap
 {
@@ -19,7 +21,12 @@ public:
 
 	// Drawing methods
 	void BucketFill(int color);
+	void DrawThickLine(double x0, double y0, double x1, double y1, double thickness, int color);
+	void GaussBlur();
 	void FillCircle(double x0, double y0, double radius, int color);
+
+	// TEST ONLY
+	void WuThickLine(int x0, int y0, int x1, int y1, int thickness, int color);
 
 private:
 	const int mOutputWidthPx;
@@ -32,6 +39,11 @@ private:
 	LICE_pixel* mOutputData;
 	LICE_WrapperBitmap mWrapperBitmap;
 	IBitmap mOutputBitmap;
+
+	// TEST ONLY
+	//void WuThickLine(int x0, int y0, int x1, int y1, int thickness, int color);
+	void MaximizeAlpha(int x, int y, int rgb, int newalpha);
+	void plotLineWidth(int x0, int y0, int x1, int y1, float wd);
 
 	void ResizeImage();
 	inline int ResampleBilinear(int srcX, int srcY, double dx, double dy);

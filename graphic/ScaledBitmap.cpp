@@ -21,10 +21,16 @@ void ScaledBitmap::Erase()
 {
 	BucketFill(LICE_RGBA(0, 0, 0, 0));
 	//FillCircle(100, 50, 4, 0xff4caf50);
+	//DrawThickLine(0, 50, 100, 75, 2, 0xffaaaaaa);
+	//WuThickLine(0, 50, 100, 25, 3, 0x88ff00ff);
+	//WuThickLine(100, 25, 115, 85, 3, 0x88ff00ff);
+	//WuThickLine(0, 50, 100, 25, 3, 0xffffffff);
+	//WuThickLine(100, 25, 115, 85, 3, 0xffffffff);
 }
 
 IBitmap& ScaledBitmap::GetIBitmap()
 {
+	//GaussBlur();
 	ResizeImage();
 	return mOutputBitmap;
 }
@@ -47,8 +53,213 @@ void ScaledBitmap::BucketFill(int color)
 	}
 }
 
+void ScaledBitmap::DrawThickLine(double x0, double y0, double x1, double y1, double thickness, int color)
+{
+	x0 *= mScaleFactor;
+	y0 *= mScaleFactor;
+	x1 *= mScaleFactor;
+	y1 *= mScaleFactor;
+	thickness *= mScaleFactor;
+
+	// TEST ONLY
+	plotLineWidth(x0, y0, x1, y1, thickness);
+
+	int dx = (int)abs(x1 - x0);
+	int dy = (int)abs(y1 - y0);
+	int sx = x0 < x1 ? 1 : -1;
+	int sy = y0 < y1 ? 1 : -1;
+	
+	int err = dx - dy, e2, x2, y2;                          /* error value e_xy */
+	float ed = dx + dy == 0 ? 1 : sqrt((float)dx * dx + (float)dy * dy);
+
+	for (thickness = (thickness + 1) / 2; ; ) {                                   /* pixel loop */
+		//setPixelColor(x0, y0, max(0, 255 * (abs(err - dx + dy) / ed - wd + 1)));
+		if (x0 >= 0 && x0 < mWidthPx && y0 >= 0 && y0 < mHeightPx)
+			mPixelData[Index(x0, y0)] = color;
+		e2 = err; x2 = x0;
+		if (2 * e2 >= -dx) {                                           /* x step */
+			for (e2 += dy, y2 = y0; e2 < ed * thickness && (y1 != y2 || dx > dy); e2 += dx)
+				//setPixelColor(x0, y2 += sy, max(0, 255 * (abs(e2) / ed - wd + 1)));
+				if (x0 >= 0 && x0 < mWidthPx && y2 + sy >= 0 && y2 + sy < mHeightPx)
+					mPixelData[Index(x0, y2 += sy)] = color;
+			if (x0 == x1) break;
+			e2 = err; err -= dy; x0 += sx;
+		}
+		if (2 * e2 <= dy) {                                            /* y step */
+			for (e2 = dx - e2; e2 < ed * thickness && (x1 != x2 || dx < dy); e2 += dy)
+				//setPixelColor(x2 += sx, y0, max(0, 255 * (abs(e2) / ed - wd + 1)));
+				if (x2 + sx >= 0 && x2 + sx < mWidthPx && y0 >= 0 && y0 < mHeightPx)
+					mPixelData[Index(x2 += sx, y0)] = color;
+			if (y0 == y1) break;
+			err += dx; y0 += sy;
+		}
+	}
+}
+
+void ScaledBitmap::GaussBlur()
+{
+	static const int kernelSize = 7;
+	static const int kernelRadius = (kernelSize - 1) / 2;
+
+	// Comment out one of these:
+	// Sigma = 0.84
+	/*
+	static const double kernel[kernelSize][kernelSize] = {
+		{0.00000067, 0.00002292, 0.00019117, 0.00038771, 0.00019117, 0.00002292, 0.00000067},
+		{0.00002292, 0.00078633, 0.00655965, 0.01330373, 0.00655965, 0.00078633, 0.00002292},
+		{0.00019117, 0.00655965, 0.05472157, 0.11098164, 0.05472157, 0.00655965, 0.00019117},
+		{0.00038771, 0.01330373, 0.11098164, 0.22508352, 0.11098164, 0.01330373, 0.00038771},
+		{0.00019117, 0.00655965, 0.05472157, 0.11098164, 0.05472157, 0.00655965, 0.00019117},
+		{0.00002292, 0.00078633, 0.00655965, 0.01330373, 0.00655965, 0.00078633, 0.00002292},
+		{0.00000067, 0.00002292, 0.00019117, 0.00038771, 0.00019117, 0.00002292, 0.00000067},
+	};
+	//*/
+	// Sigma = 3.0
+	///*
+	static const double kernel[kernelSize][kernelSize] = {
+		{0.011362, 0.014962, 0.017649, 0.018648, 0.017649, 0.014962, 0.011362},
+		{0.014962, 0.019703, 0.023240, 0.024556, 0.023240, 0.019703, 0.014962},
+		{0.017649, 0.023240, 0.027413, 0.028964, 0.027413, 0.023240, 0.017649},
+		{0.018648, 0.024556, 0.028964, 0.030603, 0.028964, 0.024556, 0.018648},
+		{0.017649, 0.023240, 0.027413, 0.028964, 0.027413, 0.023240, 0.017649},
+		{0.014962, 0.019703, 0.023240, 0.024556, 0.023240, 0.019703, 0.014962},
+		{0.011362, 0.014962, 0.017649, 0.018648, 0.017649, 0.014962, 0.011362},
+	};
+	//*/
+	for (int x = 0; x < mWidthPx; x++) {
+		for (int y = 0; y < mHeightPx; y++) {
+			if (mPixelData[Index(x, y)]) {
+
+				for (int kx = -kernelRadius; kx <= kernelRadius; kx++) {
+					if (x + kx >= 0 && x + kx < mWidthPx) {
+						for (int ky = -kernelRadius; ky <= kernelRadius; ky++) {
+							if (y + ky >= 0 && y + ky < mHeightPx) {
+
+								mPixelData[Index(x + kx, y + ky)] += kernel[kx + kernelRadius][ky + kernelRadius];
+							}
+						}
+					}
+				}
+
+			}
+		}
+	}
+}
+
+void ScaledBitmap::WuThickLine(int x0, int y0, int x1, int y1, int thickness, int color)
+{
+	int rgb = color & 0x00ffffff;
+	int alpha = (color & 0xff000000) >> 24;
+	bool isSteep = abs(y1 - y0) > abs(x1 - x0);
+	if (isSteep) {
+		std::swap(x0, y0);
+		std::swap(x1, y1);
+	}
+	if (x0 > x1) {
+		std::swap(x0, x1);
+		std::swap(y0, y0);
+	}
+
+	int dx = x1 - x0;
+	int dy = y1 - y0;
+	double slope = ((double)dy) / dx;
+	double y = y0 - (((double)thickness) / 2);
+
+	if (!isSteep) {
+		for (int x = x0; x <= x1; x++) {
+			int y_ipart = (int)floor(y);
+			double y_fpart = y - y_ipart;
+			double y_rfpart = 1 - y_fpart;
+
+			/*
+			int curralpha = (mPixelData[Index(x, y_ipart)] & 0xff000000) >> 24;
+			int newalpha = max(curralpha, (int)(255 * y_rfpart));
+			int newpx = rgb | (newalpha<<24);
+			mPixelData[Index(x, y_ipart)] = newpx;
+			*/
+			MaximizeAlpha(x, y_ipart, rgb, alpha * y_rfpart);
+
+			for (int t = 1; t < thickness; t++) {
+				mPixelData[Index(x, y_ipart + t)] = (alpha << 24) | rgb;
+			}
+
+			/*
+			curralpha = (mPixelData[Index(x, y_ipart + thickness)] & 0xff000000) >> 24;
+			newalpha = max(curralpha, (int)(255 * y_fpart));
+			newpx = rgb | (newalpha << 24);
+			mPixelData[Index(x, y_ipart + thickness)] = newpx;
+			*/
+			MaximizeAlpha(x, y_ipart + thickness, rgb, alpha * y_fpart);
+
+			y += slope;
+		}
+	} else {
+		for (int x = x0; x <= x1; x++) {
+			int y_ipart = (int)floor(y);
+			double y_fpart = y - y_ipart;
+			double y_rfpart = 1 - y_fpart;
+
+			//mPixelData[Index(y_ipart, x)] = LICE_RGBA(255, 255, 255, (int)(255 * y_rfpart));
+			MaximizeAlpha(y_ipart, x, rgb, alpha * y_rfpart);
+			for (int t = 1; t < thickness; t++) {
+				mPixelData[Index(y_ipart + t, x)] = (alpha << 24) | rgb;
+			}
+			//mPixelData[Index(y_ipart + thickness, x)] = LICE_RGBA(255, 255, 255, (int)(255 * y_fpart));
+			MaximizeAlpha(y_ipart + thickness, x, rgb, alpha * y_fpart);
+			y += slope;
+		}
+	}
+}
+
+void ScaledBitmap::MaximizeAlpha(int x, int y, int rgb, int newalpha)
+{
+	int curralpha = (mPixelData[Index(x, y)] & 0xff000000) >> 24;
+	newalpha = max(curralpha, newalpha);
+	int newpx = rgb | (newalpha << 24);
+	mPixelData[Index(x, y)] = newpx;
+}
+
+void ScaledBitmap::plotLineWidth(int x0, int y0, int x1, int y1, float wd)
+{
+	int dx = abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
+	int dy = abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
+	int err = dx - dy, e2, x2, y2;                          /* error value e_xy */
+	float ed = dx + dy == 0 ? 1 : sqrt((float)dx * dx + (float)dy * dy);
+
+	for (wd = (wd + 1) / 2; ; ) {                                   /* pixel loop */
+		//setPixelColor(x0, y0, max(0, 255 * (abs(err - dx + dy) / ed - wd + 1)));
+		int intensity = max(0, 255 * (abs(err - dx + dy) / ed - wd + 1));
+		if (intensity > 0) {
+			int n = 0;
+			n += 2;
+		}
+		mPixelData[Index(x0, y0)] = LICE_RGBA(255, 255, 255, intensity);
+		//
+		e2 = err; x2 = x0;
+		if (2 * e2 >= -dx) {                                           /* x step */
+			for (e2 += dy, y2 = y0; e2 < ed * wd && (y1 != y2 || dx > dy); e2 += dx)
+				//setPixelColor(x0, y2 += sy, max(0, 255 * (abs(e2) / ed - wd + 1)));
+				int intensity = max(0, 255 * (abs(e2) / ed - wd + 1));
+				mPixelData[Index(x0, y2 += sy)] = LICE_RGBA(255, 255, 255, intensity);
+				//
+
+			if (x0 == x1) break;
+			e2 = err; err -= dy; x0 += sx;
+		}
+		if (2 * e2 <= dy) {                                            /* y step */
+			for (e2 = dx - e2; e2 < ed * wd && (x1 != x2 || dx < dy); e2 += dy)
+				//setPixelColor(x2 += sx, y0, max(0, 255 * (abs(e2) / ed - wd + 1)));
+				int intensity = max(0, 255 * (abs(e2) / ed - wd + 1));
+				mPixelData[Index(x2 += sx, y0)] = LICE_RGBA(255, 255, 255, intensity);
+			if (y0 == y1) break;
+			err += dx; y0 += sy;
+		}
+	}
+}
+
 void ScaledBitmap::FillCircle(double x0, double y0, double radius, int color)
 {
+	color = 0xffaaaaaa;
 	x0 *= mScaleFactor;
 	y0 *= mScaleFactor;
 	radius *= mScaleFactor;
@@ -82,7 +293,9 @@ void ScaledBitmap::ResizeImage()
 			double dx = (ratioX * newX) - srcX;
 			double dy = (ratioY * newY) - srcY;
 
-			int outputPx = ResampleBicubic(srcX, srcY, dx, dy);
+			//int outputPx = ResampleBicubic(srcX, srcY, dx, dy);
+			// TEST ONLY!!!!!
+			int outputPx = mPixelData[outputIndex];
 
 			// Re-assemble
 			mOutputData[outputIndex] = outputPx;

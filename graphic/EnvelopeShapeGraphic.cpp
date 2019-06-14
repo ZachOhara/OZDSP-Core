@@ -3,8 +3,8 @@
 EnvelopeShapeGraphic::EnvelopeShapeGraphic(IPlugBase* pPlug, EnvelopeProcessor* pProcessor, IRECT rect) :
 	IControl(pPlug, rect),
 	mColor(0xff00c853),
-	mBitmap(rect.W(), rect.H(), kScaleFactor),
-	nOutputFrames((rect.W() - (2 * kBoxPadPx)) * kScaleFactor)
+	mBitmap(rect.W(), rect.H()),
+	nOutputFrames((rect.W() - (2 * kBoxPadPx)))
 {
 	mpProcessor = pProcessor;
 	AllocateArray();
@@ -22,7 +22,7 @@ bool EnvelopeShapeGraphic::Draw(IGraphics* pGraphics)
 
 	RasterizeOutputs();
 
-	pGraphics->DrawBitmap(&mBitmap.GetIBitmap(), GetRECT());
+	pGraphics->DrawBitmap(&mBitmap.GetColoredImage(mColor), GetRECT());
 	
 	return true;
 }
@@ -79,22 +79,14 @@ void EnvelopeShapeGraphic::RasterizeOutputs()
 	int drawWidth = GetRECT()->W() - (2 * kBoxPadPx);
 	int drawHeight = GetRECT()->H() - (2 * kBoxPadPx);
 	double lastY = kBoxPadPx + ((1 - mOutputs[0]) * drawHeight);
+	double lastX = kBoxPadPx;
 	for (int i = 1; i < nOutputFrames; i++) {
 		double progress = ((double)i) / nOutputFrames;
 		double x = kBoxPadPx + (progress * drawWidth);
 		double y = kBoxPadPx + ((1 - mOutputs[i]) * drawHeight);
-		
-		DrawThickVerticalLine(x, lastY, y, kLineWidth);
+		mBitmap.DrawThickLine(lastX, lastY, x, y, 1);
+		lastX = x;
 		lastY = y;
-	}
-}
-
-void EnvelopeShapeGraphic::DrawThickVerticalLine(double x, double y0, double y1, double radius)
-{
-	if (y0 > y1)
-		std::swap(y0, y1);
-	for (int y = y0; y <= y1; y++) {
-		mBitmap.FillCircle(x, y, radius, mColor);
 	}
 }
 
