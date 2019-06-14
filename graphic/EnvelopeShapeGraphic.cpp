@@ -1,33 +1,13 @@
 #include "EnvelopeShapeGraphic.h"
 
 EnvelopeShapeGraphic::EnvelopeShapeGraphic(IPlugBase* pPlug, EnvelopeProcessor* pProcessor, IRECT rect) :
-	FunctionLineGraphic(pPlug, rect, 0xffffffff),
-	mColor(0xff00c853),
-	mBitmap(rect.W(), rect.H()),
-	nOutputFrames((rect.W() - (2 * kBoxPadPx)))
+	FunctionLineGraphic(pPlug, rect, 0xffffffff)
 {
 	mpProcessor = pProcessor;
-	AllocateArray();
 }
 EnvelopeShapeGraphic::~EnvelopeShapeGraphic()
 {
-	DeleteArrays();
 }
-
-/*
-bool EnvelopeShapeGraphic::Draw(IGraphics* pGraphics)
-{
-	CalculateOutputs(mOutputs, nOutputFrames);
-
-	mBitmap.Erase();
-
-	RasterizeOutputs();
-
-	pGraphics->DrawBitmap(&mBitmap.GetColoredImage(mColor), GetRECT());
-	
-	return true;
-}
-*/
 
 bool EnvelopeShapeGraphic::IsDirty()
 {
@@ -86,31 +66,4 @@ void EnvelopeShapeGraphic::CalculateSegmentOutput(double* outputs, int segmentSt
 		int x = i + segmentStart;
 		outputs[x] = currentOutput;
 	}
-}
-
-void EnvelopeShapeGraphic::RasterizeOutputs()
-{
-	int drawWidth = GetRECT()->W() - (2 * kBoxPadPx);
-	int drawHeight = GetRECT()->H() - (2 * kBoxPadPx);
-	double lastY = kBoxPadPx + ((1 - mOutputs[0]) * drawHeight);
-	double lastX = kBoxPadPx;
-	for (int i = 1; i < nOutputFrames; i++) {
-		double progress = ((double)i) / nOutputFrames;
-		double x = kBoxPadPx + (progress * drawWidth);
-		double y = kBoxPadPx + ((1 - mOutputs[i]) * drawHeight);
-		mBitmap.DrawThickLine(lastX, lastY, x, y, 1);
-		lastX = x;
-		lastY = y;
-	}
-}
-
-void EnvelopeShapeGraphic::AllocateArray()
-{
-	mOutputs = new double[nOutputFrames];
-}
-
-void EnvelopeShapeGraphic::DeleteArrays()
-{
-	delete[] mOutputs;
-	mOutputs = nullptr;
 }
