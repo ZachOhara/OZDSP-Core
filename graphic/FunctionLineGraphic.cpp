@@ -33,14 +33,14 @@ double FunctionLineGraphic::GetFunctionValue(double x)
 	return 0.5;
 }
 
-double FunctionLineGraphic::GetThickFunctionTop(double x)
+double FunctionLineGraphic::GetThickFunctionTop(double x, double halfweight)
 {
-	return GetFunctionValue(x + mHalfWeight) + mHalfWeight;
+	return GetFunctionValue(x + halfweight) + halfweight;
 }
 
-double FunctionLineGraphic::GetThickFunctionBottom(double x)
+double FunctionLineGraphic::GetThickFunctionBottom(double x, double halfweight)
 {
-	return GetFunctionValue(x - mHalfWeight) - mHalfWeight;
+	return GetFunctionValue(x - halfweight) - halfweight;
 }
 
 void FunctionLineGraphic::ShadeCells()
@@ -50,10 +50,8 @@ void FunctionLineGraphic::ShadeCells()
 	int h_subpx = mHeightPx * mSubpxRes;
 	for (int x = 0; x < w_subpx; x++) {
 		double progress = ((double)x) / w_subpx;
-		int y0 = floor(h_subpx * GetThickFunctionBottom(progress));
-		int y1 = ceil(h_subpx * GetThickFunctionTop(progress));
-		//if (progress > 0.249)
-		//	int n = 0;
+		int y0 = floor(h_subpx * GetThickFunctionBottom(progress, mHalfWeight));
+		int y1 = ceil(h_subpx * GetThickFunctionTop(progress, mHalfWeight));
 		y0 = min(y0, h_subpx - 1);
 		y0 = max(y0, 0);
 		y1 = min(y1, h_subpx - 1);

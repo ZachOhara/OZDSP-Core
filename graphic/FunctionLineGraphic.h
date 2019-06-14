@@ -17,6 +17,9 @@ public:
 protected:
 	virtual double GetFunctionValue(double x);
 
+	virtual double GetThickFunctionTop(double x, double halfweight);
+	virtual double GetThickFunctionBottom(double x, double halfweight);
+
 private:
 	const double kDefaultLineThickness = 0.01;
 	const int kDefaultSubpixelResolution = 8;
@@ -31,9 +34,6 @@ private:
 	unsigned int* mOutputRaster;
 	LICE_WrapperBitmap mWrapperBitmap;
 	IBitmap mOutputBitmap;
-
-	double GetThickFunctionTop(double x);
-	double GetThickFunctionBottom(double x);
 
 	void ShadeCells();
 	void RenderPixels();

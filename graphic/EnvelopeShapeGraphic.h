@@ -16,21 +16,21 @@ public:
 	EnvelopeShapeGraphic(IPlugBase* pPlug, EnvelopeProcessor* processor, IRECT rect);
 	~EnvelopeShapeGraphic();
 
+	bool IsDirty() override;
+
 protected:
 	double GetFunctionValue(double x) override;
+
+	double GetThickFunctionTop(double x, double halfweight) override;
+	double GetThickFunctionBottom(double x, double halfweight) override;
 
 private:
 	EnvelopeProcessor* mpProcessor;
 
-	//double* mOutputs;
-	//int nOutputFrames;
-
-	// TODO make this more efficient
-	bool IsDirty() override;
-
-	void CalculateOutputs(double* outputs, int nFrames);
-	void CalculateSegmentOutput(double* outputs, int segmentStart, int segmentEnd,
-		double startOutput, double endOutput, double exponent);
+	double AttackOutput(double x);
+	double DecayOutput(double x);
+	double SustainOutput(double x);
+	double ReleaseOutput(double x);
 };
 
 #endif // !__ENVELOPE_SHAPE_GRAPHIC_H__
