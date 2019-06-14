@@ -5,17 +5,21 @@
 
 #include "../audio/EnvelopeProcessor.h"
 #include "../graphic/AlphaMaskBitmap.h"
+#include "../graphic/FunctionLineGraphic.h"
 
 #include <algorithm>
 #include <utility>
 
-class EnvelopeShapeGraphic : public IControl
+class EnvelopeShapeGraphic : public FunctionLineGraphic
 {
 public:
 	EnvelopeShapeGraphic(IPlugBase* pPlug, EnvelopeProcessor* processor, IRECT rect);
 	~EnvelopeShapeGraphic();
 
-	bool Draw(IGraphics* pGraphics) override;
+	//bool Draw(IGraphics* pGraphics) override;
+
+protected:
+	double GetFunctionValue(double x) override;
 
 private:
 	const int kBoxPadPx = 3;

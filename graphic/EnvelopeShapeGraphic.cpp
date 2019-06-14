@@ -1,7 +1,7 @@
 #include "EnvelopeShapeGraphic.h"
 
 EnvelopeShapeGraphic::EnvelopeShapeGraphic(IPlugBase* pPlug, EnvelopeProcessor* pProcessor, IRECT rect) :
-	IControl(pPlug, rect),
+	FunctionLineGraphic(pPlug, rect, 0xffffffff),
 	mColor(0xff00c853),
 	mBitmap(rect.W(), rect.H()),
 	nOutputFrames((rect.W() - (2 * kBoxPadPx)))
@@ -14,6 +14,7 @@ EnvelopeShapeGraphic::~EnvelopeShapeGraphic()
 	DeleteArrays();
 }
 
+/*
 bool EnvelopeShapeGraphic::Draw(IGraphics* pGraphics)
 {
 	CalculateOutputs(mOutputs, nOutputFrames);
@@ -26,10 +27,23 @@ bool EnvelopeShapeGraphic::Draw(IGraphics* pGraphics)
 	
 	return true;
 }
+*/
 
 bool EnvelopeShapeGraphic::IsDirty()
 {
 	return true;
+}
+
+double EnvelopeShapeGraphic::GetFunctionValue(double x)
+{
+	if (x < 0.25)
+		return pow(x / 0.25, 2);
+	else if (x < 0.5)
+		return 1 - (0.5 * pow((x - 0.25) / 0.25, 2));
+	else if (x < 0.75)
+		return 0.5;
+	else
+		return 0.5 - (0.5 * pow((x - 0.75) / 0.25, 2));
 }
 
 void EnvelopeShapeGraphic::CalculateOutputs(double* outputs, int nFrames)
