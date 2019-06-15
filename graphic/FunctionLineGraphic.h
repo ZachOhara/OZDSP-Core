@@ -19,14 +19,13 @@ protected:
 	virtual double GetLocalDerivative(double x, double ymax);
 
 private:
-	const double kDefaultLineThickness = 0.01;
+	const double kDefaultLineThickness = 3.0;
 	const int kDefaultSubpixelResolution = 8;
 	const double kDefaultTStep = 0.0004;
 
 	const int mWidthPx;
 	const int mHeightPx;
-	const double mHeightRatio;
-	const double mHalfWeight;
+	const double mLineThickness;
 	const int mSubpxRes;
 	int mLineColor;
 

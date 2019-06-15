@@ -4,8 +4,7 @@ FunctionLineGraphic::FunctionLineGraphic(IPlugBase* pPlug, IRECT rect, int lineC
 	IControl(pPlug, rect),
 	mWidthPx(rect.W()),
 	mHeightPx(rect.H()),
-	mHeightRatio(((double)mHeightPx) / mWidthPx),
-	mHalfWeight(kDefaultLineThickness / 2),
+	mLineThickness(kDefaultLineThickness),
 	mSubpxRes(kDefaultSubpixelResolution),
 	mLineColor(lineColor),
 	mWrapperBitmap(nullptr, 0, 0, 0, false),
@@ -53,23 +52,30 @@ void FunctionLineGraphic::ClearLineBoundCaches()
 
 void FunctionLineGraphic::CalculateLineBounds()
 {
+	// Calculate and cache some values
 	int w_subpx = Subpx_W();
 	int h_subpx = Subpx_H();
+	int linebuffer = ((int)ceil(mLineThickness));
+	int w_drawpx = (mWidthPx - linebuffer) * mSubpxRes;
+	int h_drawpx = (mHeightPx - linebuffer) * mSubpxRes;
+	double heightRatio = ((double)h_drawpx) / w_drawpx;
+	double halfWeight = (mLineThickness / mWidthPx) / 2;
+	// Start the loop
 	double t = 0.0;
 	while (t < 1.0) {
 		double x0 = t;
-		double y0 = GetFunctionValue(x0, mHeightRatio);
-		double local_deriv = GetLocalDerivative(x0, mHeightRatio);
+		double y0 = GetFunctionValue(x0, heightRatio);
+		double local_deriv = GetLocalDerivative(x0, heightRatio);
 		if (local_deriv == 0) {
 			local_deriv = 0.000000001;
 		}
 		double orthagonal_slope = -1.0 / local_deriv;
-		double dx = sqrt(pow(mHalfWeight, 2) / (1.0 + pow(orthagonal_slope, 2)));
+		double dx = sqrt(pow(halfWeight, 2) / (1.0 + pow(orthagonal_slope, 2)));
 		double dy = dx * orthagonal_slope;
-		int x_top = (int)round(w_subpx * (x0 - dx));
-		int y_top = (int)round(w_subpx * (y0 - dy));
-		int x_bot = (int)round(w_subpx * (x0 + dx));
-		int y_bot = (int)round(w_subpx * (y0 + dy));
+		int x_top = (int)round(w_drawpx * (x0 - dx + halfWeight));
+		int y_top = (int)round(w_drawpx * (y0 - dy + halfWeight));
+		int x_bot = (int)round(w_drawpx * (x0 + dx + halfWeight));
+		int y_bot = (int)round(w_drawpx * (y0 + dy + halfWeight));
 
 		if (local_deriv < 0) {
 			std::swap(x_top, x_bot);
@@ -103,8 +109,7 @@ void FunctionLineGraphic::CalculateLineBounds()
 
 		t += kDefaultTStep;
 	}
-
-	// check for completion
+	// Check for completion and fill in any gaps
 	for (int i = 0; i < w_subpx; i++) {
 		if (mTopValues[i] == -1)
 			mTopValues[i] = h_subpx - 1;
