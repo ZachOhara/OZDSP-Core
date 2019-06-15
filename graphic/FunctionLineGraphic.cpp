@@ -81,11 +81,23 @@ void FunctionLineGraphic::CalculateLineBounds()
 		y_bot = min(y_bot, h_subpx - 1);
 		y_bot = max(y_bot, 0);
 
-		if (x_top >= 0 && x_top < w_subpx)
-			mTopValues[x_top] = y_top;
-		if (x_bot >= 0 && x_bot < w_subpx)
-			mBottomValues[x_bot] = y_bot;
-		
+		if (x_top >= 0 && x_top < w_subpx) {
+			if (mTopValues[x_top] == -1) {
+				mTopValues[x_top] = y_top;
+			}
+			else {
+				mTopValues[x_top] = max(mTopValues[x_top], y_top);
+			}
+		}
+		if (x_bot >= 0 && x_bot < w_subpx) {
+			if (mBottomValues[x_bot] == -1) {
+				mBottomValues[x_bot] = y_bot;
+			}
+			else {
+				mBottomValues[x_bot] = min(mBottomValues[x_bot], y_bot);
+			}
+		}
+
 		if (t > 0.45 && t < 0.5)
 			int n = 1;
 

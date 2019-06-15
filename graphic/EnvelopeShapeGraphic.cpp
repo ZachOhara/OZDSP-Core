@@ -66,7 +66,7 @@ double EnvelopeShapeGraphic::GetLocalDerivative(double x, double ymax)
 
 	if (x < attackRbound) {
 		double seg_progress = x / attackRbound;
-		return ymax * attackExponent * pow(seg_progress, attackExponent - 1);
+		return attackExponent * pow(seg_progress, attackExponent - 1);
 	}
 	else if (x < decayRbound) {
 		double seg_progress = (x - attackRbound) / (decayRbound - attackRbound);
