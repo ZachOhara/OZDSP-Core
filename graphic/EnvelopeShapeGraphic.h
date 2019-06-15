@@ -4,7 +4,6 @@
 #include "IPlug_include_in_plug_hdr.h"
 
 #include "../audio/EnvelopeProcessor.h"
-#include "../graphic/AlphaMaskBitmap.h"
 #include "../graphic/FunctionLineGraphic.h"
 
 #include <algorithm>
@@ -13,7 +12,7 @@
 class EnvelopeShapeGraphic : public FunctionLineGraphic
 {
 public:
-	EnvelopeShapeGraphic(IPlugBase* pPlug, EnvelopeProcessor* processor, IRECT rect);
+	EnvelopeShapeGraphic(IPlugBase* pPlug, IRECT rect, EnvelopeProcessor* pProcessor);
 	~EnvelopeShapeGraphic();
 
 	bool IsDirty() override;

@@ -1,6 +1,6 @@
 #include "EnvelopeShapeGraphic.h"
 
-EnvelopeShapeGraphic::EnvelopeShapeGraphic(IPlugBase* pPlug, EnvelopeProcessor* pProcessor, IRECT rect) :
+EnvelopeShapeGraphic::EnvelopeShapeGraphic(IPlugBase* pPlug, IRECT rect, EnvelopeProcessor* pProcessor) :
 	FunctionLineGraphic(pPlug, rect, 0xffffffff)
 {
 	mpProcessor = pProcessor;
