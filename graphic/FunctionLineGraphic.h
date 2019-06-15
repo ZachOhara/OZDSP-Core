@@ -9,7 +9,7 @@
 class FunctionLineGraphic : public IControl
 {
 public:
-	FunctionLineGraphic(IPlugBase* pPlug, IRECT rect, int lineCcolor);
+	FunctionLineGraphic(IPlugBase* pPlug, IRECT rect, int lineColor, int fillColor);
 	~FunctionLineGraphic();
 
 	bool Draw(IGraphics* pGraphics) override;
@@ -28,19 +28,22 @@ private:
 	const double mLineThickness;
 	const int mSubpxRes;
 	int mLineColor;
+	int mFillColor;
 
+	int* mFunctionValues;
 	int* mTopValues;
 	int* mBottomValues;
 
-	unsigned char* mCellShading;
+	unsigned char* mFillShading;
+	unsigned char* mLineShading;
 	unsigned int* mOutputRaster;
 	LICE_WrapperBitmap mWrapperBitmap;
 	IBitmap mOutputBitmap;
 
-	void ClearLineBoundCaches();
-	void CalculateLineBounds();
+	void ClearPositionCaches();
+	void CalculatePositions();
 	void RepairLineGaps(int* values, int mode);
-	void ClearCellShading();
+	void ClearShading();
 	void ShadeCells();
 	void RenderPixels();
 
