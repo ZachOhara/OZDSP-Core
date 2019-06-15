@@ -39,7 +39,7 @@ private:
 
 	void ClearLineBoundCaches();
 	void CalculateLineBounds();
-	void RepairLineGaps();
+	void RepairLineGaps(int* values, int mode);
 	void ClearCellShading();
 	void ShadeCells();
 	void RenderPixels();

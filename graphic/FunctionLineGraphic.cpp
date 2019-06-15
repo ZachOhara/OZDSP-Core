@@ -22,7 +22,8 @@ bool FunctionLineGraphic::Draw(IGraphics* pGraphics)
 {
 	ClearLineBoundCaches();
 	CalculateLineBounds();
-	RepairLineGaps();
+	RepairLineGaps(mTopValues, 0);
+	RepairLineGaps(mBottomValues, 2);
 	ClearCellShading();
 	ShadeCells();
 	RenderPixels();
@@ -112,16 +113,39 @@ void FunctionLineGraphic::CalculateLineBounds()
 	}
 }
 
-void FunctionLineGraphic::RepairLineGaps()
+void FunctionLineGraphic::RepairLineGaps(int* values, int mode)
 {
+	// Modes: 0 for maximize, 1 for minimize, 2 for average
 	int w_subpx = Subpx_W();
-	int h_subpx = Subpx_H();
-	for (int i = 0; i < w_subpx; i++) {
-		if (mTopValues[i] == -1)
-			mTopValues[i] = h_subpx - 1;
-		if (mBottomValues[i] == -1)
-			mBottomValues[i] = 0;
-	}
+	//bool needsToRepair = true;
+	//while (needsToRepair) {
+		//needsToRepair = false;
+		for (int i = 0; i < w_subpx; i++) {
+			if (values[i] == -1) {
+				// Best case scenario: two adjacent values
+				if (i != 0 && i != w_subpx - 1 && values[i - 1] != -1 && values[i + 1] != -1) {
+					switch (mode) {
+					case 0:
+						values[i] = max(values[i - 1], values[i + 1]);
+					case 1:
+						values[i] = min(values[i - 1], values[i + 1]);
+					case 2:
+						values[i] = (values[i - 1] + values[i + 1]) / 2;
+					}
+				}
+				// Lesser scenario: one adjacent value
+				else if (i != 0 && values[i - 1]) {
+					values[i] = values[i - 1];
+				}
+				else if (i != w_subpx - 1 && values[i + 1] != -1) {
+					values[i] = values[i + 1];
+				}
+				//else {
+				//	needsToRepair = true; // go for another loop after this
+				//}
+			}
+		}
+	//}
 }
 
 void FunctionLineGraphic::ClearCellShading()
