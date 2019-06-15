@@ -22,6 +22,7 @@ bool FunctionLineGraphic::Draw(IGraphics* pGraphics)
 {
 	ClearLineBoundCaches();
 	CalculateLineBounds();
+	RepairLineGaps();
 	ClearCellShading();
 	ShadeCells();
 	RenderPixels();
@@ -72,9 +73,9 @@ void FunctionLineGraphic::CalculateLineBounds()
 		double orthagonal_slope = -1.0 / local_deriv;
 		double dx = sqrt(pow(halfWeight, 2) / (1.0 + pow(orthagonal_slope, 2)));
 		double dy = dx * orthagonal_slope;
-		int x_top = (int)round(w_drawpx * (x0 - dx + halfWeight));
+		int x_top = (int)round(w_subpx * (x0 - dx));
 		int y_top = (int)round(w_drawpx * (y0 - dy + halfWeight));
-		int x_bot = (int)round(w_drawpx * (x0 + dx + halfWeight));
+		int x_bot = (int)round(w_subpx * (x0 + dx));
 		int y_bot = (int)round(w_drawpx * (y0 + dy + halfWeight));
 
 		if (local_deriv < 0) {
@@ -109,7 +110,12 @@ void FunctionLineGraphic::CalculateLineBounds()
 
 		t += kDefaultTStep;
 	}
-	// Check for completion and fill in any gaps
+}
+
+void FunctionLineGraphic::RepairLineGaps()
+{
+	int w_subpx = Subpx_W();
+	int h_subpx = Subpx_H();
 	for (int i = 0; i < w_subpx; i++) {
 		if (mTopValues[i] == -1)
 			mTopValues[i] = h_subpx - 1;
@@ -133,11 +139,13 @@ void FunctionLineGraphic::ShadeCells()
 	for (int x = 0; x < w_subpx; x++) {
 		int y_top = mTopValues[x];
 		int y_bot = mBottomValues[x];
-		for (int y = y_bot; y <= y_top; y++) {
-			int x_bigpx = (int)(((double)x) / mSubpxRes);
-			int y_bigpx = (int)(((double)y) / mSubpxRes);
-			mCellShading[Index(x_bigpx, mHeightPx - y_bigpx - 1)] += 1;
-		}
+		//if (y_top != -1 && y_bot != -1) {
+			for (int y = y_bot; y <= y_top; y++) {
+				int x_bigpx = (int)(((double)x) / mSubpxRes);
+				int y_bigpx = (int)(((double)y) / mSubpxRes);
+				mCellShading[Index(x_bigpx, mHeightPx - y_bigpx - 1)] += 1;
+			}
+		//}
 	}
 }
 
