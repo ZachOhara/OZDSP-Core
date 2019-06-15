@@ -19,18 +19,11 @@ public:
 	bool IsDirty() override;
 
 protected:
-	double GetFunctionValue(double x) override;
-
-	double GetThickFunctionTop(double x, double halfweight) override;
-	double GetThickFunctionBottom(double x, double halfweight) override;
+	double GetFunctionValue(double x, double ymax) override;
+	double GetLocalDerivative(double x, double ymax) override;
 
 private:
 	EnvelopeProcessor* mpProcessor;
-
-	double AttackOutput(double x);
-	double DecayOutput(double x);
-	double SustainOutput(double x);
-	double ReleaseOutput(double x);
 };
 
 #endif // !__ENVELOPE_SHAPE_GRAPHIC_H__

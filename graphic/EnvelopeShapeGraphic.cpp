@@ -14,7 +14,7 @@ bool EnvelopeShapeGraphic::IsDirty()
 	return true;
 }
 
-double EnvelopeShapeGraphic::GetFunctionValue(double x)
+double EnvelopeShapeGraphic::GetFunctionValue(double x, double ymax)
 {
 	// TODO cache these variables as soon as they are set
 	double attackTime = mpProcessor->GetParamNormalized(EnvelopeProcessor::kAttackTimeParam);
@@ -30,20 +30,23 @@ double EnvelopeShapeGraphic::GetFunctionValue(double x)
 
 	double attackRbound = attackTime * 0.25;
 	double decayRbound = attackRbound + (decayTime * 0.25);
-	double releaseRbound = 1 - (releaseTime * 0.25);
+	double releaseLbound = 1 - (releaseTime * 0.25);
 
 	if (x < attackRbound) {
-		return pow(x / attackRbound, attackExponent);
+		double seg_progress = x / attackRbound;
+		return ymax * pow(seg_progress, attackExponent);
 	} else if (x < decayRbound) {
-		return 1 - ((1 - sustainLevel) * pow((x - attackRbound) / (decayRbound - attackRbound), decayExponent));
-	} else if (x < releaseRbound) {
-		return sustainLevel;
+		double seg_progress = (x - attackRbound) / (decayRbound - attackRbound);
+		return ymax * (1 - ((1 - sustainLevel) * pow(seg_progress, decayExponent)));
+	} else if (x < releaseLbound) {
+		return ymax * sustainLevel;
 	} else {
-		return sustainLevel - (sustainLevel * pow((x - releaseRbound) / (1 - releaseRbound), releaseExponent));
+		double seg_progress = (x - releaseLbound) / (1 - releaseLbound);
+		return ymax * (sustainLevel - (sustainLevel * pow(seg_progress, releaseExponent)));
 	}
 }
 
-double EnvelopeShapeGraphic::GetThickFunctionTop(double x, double halfweight)
+double EnvelopeShapeGraphic::GetLocalDerivative(double x, double ymax)
 {
 	// TODO cache these variables as soon as they are set
 	double attackTime = mpProcessor->GetParamNormalized(EnvelopeProcessor::kAttackTimeParam);
@@ -59,152 +62,21 @@ double EnvelopeShapeGraphic::GetThickFunctionTop(double x, double halfweight)
 
 	double attackRbound = attackTime * 0.25;
 	double decayRbound = attackRbound + (decayTime * 0.25);
-	double releaseRbound = 1 - (releaseTime * 0.25);
+	double releaseLbound = 1 - (releaseTime * 0.25);
 
 	if (x < attackRbound) {
-		return AttackOutput(x + halfweight) + halfweight;
+		double seg_progress = x / attackRbound;
+		return ymax * attackExponent * pow(seg_progress, attackExponent - 1);
 	}
 	else if (x < decayRbound) {
-
-		return DecayOutput(x - halfweight) + halfweight;
+		double seg_progress = (x - attackRbound) / (decayRbound - attackRbound);
+		return -0.5 * (1 - sustainLevel) * (decayExponent * pow(seg_progress, decayExponent - 1));
 	}
-	else if (x < releaseRbound) {
-		return sustainLevel + (2 * halfweight);
-	}
-	else {
-		return ReleaseOutput(x - halfweight) + halfweight;
-	}
-
-	/*
-	if (x < attackRbound)
-		return GetFunctionValue(x + halfweight) + halfweight;
-	else
-		return GetFunctionValue(x - halfweight) + halfweight;
-	*/
-}
-
-double EnvelopeShapeGraphic::GetThickFunctionBottom(double x, double halfweight)
-{
-	// TODO cache these variables as soon as they are set
-	double attackTime = mpProcessor->GetParamNormalized(EnvelopeProcessor::kAttackTimeParam);
-	double decayTime = mpProcessor->GetParamNormalized(EnvelopeProcessor::kDecayTimeParam);
-	double sustainLevel = mpProcessor->GetParamNormalized(EnvelopeProcessor::kSustainLevelParam);
-	double releaseTime = mpProcessor->GetParamNormalized(EnvelopeProcessor::kReleaseTimeParam);
-	double attackExponent = EnvelopeProcessor::GetExponentFromShapeParameter(
-		mpProcessor->GetParamValue(EnvelopeProcessor::kAttackShapeParam));
-	double decayExponent = EnvelopeProcessor::GetExponentFromShapeParameter(
-		mpProcessor->GetParamValue(EnvelopeProcessor::kDecayShapeParam));
-	double releaseExponent = EnvelopeProcessor::GetExponentFromShapeParameter(
-		mpProcessor->GetParamValue(EnvelopeProcessor::kReleaseShapeParam));
-
-	double attackRbound = attackTime * 0.25;
-	double decayRbound = attackRbound + (decayTime * 0.25);
-	double releaseRbound = 1 - (releaseTime * 0.25);
-
-	if (x < attackRbound) {
-		return AttackOutput(x - halfweight) - halfweight;
-	}
-	else if (x < decayRbound) {
-
-		return DecayOutput(x + halfweight) - halfweight;
-	}
-	else if (x < releaseRbound) {
-		return sustainLevel - (2*halfweight);
+	else if (x < releaseLbound) {
+		return 0;
 	}
 	else {
-		return ReleaseOutput(x + halfweight) - halfweight;
+		double seg_progress = (x - releaseLbound) / (1 - releaseLbound);
+		return -0.5 * sustainLevel * (releaseExponent * pow(seg_progress, releaseExponent - 1));
 	}
-
-	/*
-	if (x < attackRbound)
-		return GetFunctionValue(x - halfweight) - halfweight;
-	else
-		return GetFunctionValue(x + halfweight) - halfweight;
-	*/
 }
-
-double EnvelopeShapeGraphic::AttackOutput(double x)
-{
-	// TODO cache these variables as soon as they are set
-	double attackTime = mpProcessor->GetParamNormalized(EnvelopeProcessor::kAttackTimeParam);
-	double decayTime = mpProcessor->GetParamNormalized(EnvelopeProcessor::kDecayTimeParam);
-	double sustainLevel = mpProcessor->GetParamNormalized(EnvelopeProcessor::kSustainLevelParam);
-	double releaseTime = mpProcessor->GetParamNormalized(EnvelopeProcessor::kReleaseTimeParam);
-	double attackExponent = EnvelopeProcessor::GetExponentFromShapeParameter(
-		mpProcessor->GetParamValue(EnvelopeProcessor::kAttackShapeParam));
-	double decayExponent = EnvelopeProcessor::GetExponentFromShapeParameter(
-		mpProcessor->GetParamValue(EnvelopeProcessor::kDecayShapeParam));
-	double releaseExponent = EnvelopeProcessor::GetExponentFromShapeParameter(
-		mpProcessor->GetParamValue(EnvelopeProcessor::kReleaseShapeParam));
-
-	double attackRbound = attackTime * 0.25;
-	double decayRbound = attackRbound + (decayTime * 0.25);
-	double releaseRbound = 1 - (releaseTime * 0.25);
-
-	return pow(x / attackRbound, attackExponent);
-}
-
-double EnvelopeShapeGraphic::DecayOutput(double x)
-{
-	// TODO cache these variables as soon as they are set
-	double attackTime = mpProcessor->GetParamNormalized(EnvelopeProcessor::kAttackTimeParam);
-	double decayTime = mpProcessor->GetParamNormalized(EnvelopeProcessor::kDecayTimeParam);
-	double sustainLevel = mpProcessor->GetParamNormalized(EnvelopeProcessor::kSustainLevelParam);
-	double releaseTime = mpProcessor->GetParamNormalized(EnvelopeProcessor::kReleaseTimeParam);
-	double attackExponent = EnvelopeProcessor::GetExponentFromShapeParameter(
-		mpProcessor->GetParamValue(EnvelopeProcessor::kAttackShapeParam));
-	double decayExponent = EnvelopeProcessor::GetExponentFromShapeParameter(
-		mpProcessor->GetParamValue(EnvelopeProcessor::kDecayShapeParam));
-	double releaseExponent = EnvelopeProcessor::GetExponentFromShapeParameter(
-		mpProcessor->GetParamValue(EnvelopeProcessor::kReleaseShapeParam));
-
-	double attackRbound = attackTime * 0.25;
-	double decayRbound = attackRbound + (decayTime * 0.25);
-	double releaseRbound = 1 - (releaseTime * 0.25);
-
-	return 1 - ((1 - sustainLevel) * pow((x - attackRbound) / (decayRbound - attackRbound), decayExponent));
-}
-
-double EnvelopeShapeGraphic::SustainOutput(double x)
-{
-	// TODO cache these variables as soon as they are set
-	double attackTime = mpProcessor->GetParamNormalized(EnvelopeProcessor::kAttackTimeParam);
-	double decayTime = mpProcessor->GetParamNormalized(EnvelopeProcessor::kDecayTimeParam);
-	double sustainLevel = mpProcessor->GetParamNormalized(EnvelopeProcessor::kSustainLevelParam);
-	double releaseTime = mpProcessor->GetParamNormalized(EnvelopeProcessor::kReleaseTimeParam);
-	double attackExponent = EnvelopeProcessor::GetExponentFromShapeParameter(
-		mpProcessor->GetParamValue(EnvelopeProcessor::kAttackShapeParam));
-	double decayExponent = EnvelopeProcessor::GetExponentFromShapeParameter(
-		mpProcessor->GetParamValue(EnvelopeProcessor::kDecayShapeParam));
-	double releaseExponent = EnvelopeProcessor::GetExponentFromShapeParameter(
-		mpProcessor->GetParamValue(EnvelopeProcessor::kReleaseShapeParam));
-
-	double attackRbound = attackTime * 0.25;
-	double decayRbound = attackRbound + (decayTime * 0.25);
-	double releaseRbound = 1 - (releaseTime * 0.25);
-
-	
-	return sustainLevel;
-}
-
-double EnvelopeShapeGraphic::ReleaseOutput(double x)
-{
-	// TODO cache these variables as soon as they are set
-	double attackTime = mpProcessor->GetParamNormalized(EnvelopeProcessor::kAttackTimeParam);
-	double decayTime = mpProcessor->GetParamNormalized(EnvelopeProcessor::kDecayTimeParam);
-	double sustainLevel = mpProcessor->GetParamNormalized(EnvelopeProcessor::kSustainLevelParam);
-	double releaseTime = mpProcessor->GetParamNormalized(EnvelopeProcessor::kReleaseTimeParam);
-	double attackExponent = EnvelopeProcessor::GetExponentFromShapeParameter(
-		mpProcessor->GetParamValue(EnvelopeProcessor::kAttackShapeParam));
-	double decayExponent = EnvelopeProcessor::GetExponentFromShapeParameter(
-		mpProcessor->GetParamValue(EnvelopeProcessor::kDecayShapeParam));
-	double releaseExponent = EnvelopeProcessor::GetExponentFromShapeParameter(
-		mpProcessor->GetParamValue(EnvelopeProcessor::kReleaseShapeParam));
-
-	double attackRbound = attackTime * 0.25;
-	double decayRbound = attackRbound + (decayTime * 0.25);
-	double releaseRbound = 1 - (releaseTime * 0.25);
-
-	return sustainLevel - (sustainLevel * pow((x - releaseRbound) / (1 - releaseRbound), releaseExponent));
-}
-

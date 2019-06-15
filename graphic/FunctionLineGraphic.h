@@ -15,34 +15,40 @@ public:
 	bool Draw(IGraphics* pGraphics) override;
 
 protected:
-	virtual double GetFunctionValue(double x);
-
-	virtual double GetThickFunctionTop(double x, double halfweight);
-	virtual double GetThickFunctionBottom(double x, double halfweight);
+	virtual double GetFunctionValue(double x, double ymax);
+	virtual double GetLocalDerivative(double x, double ymax);
 
 private:
 	const double kDefaultLineThickness = 0.01;
 	const int kDefaultSubpixelResolution = 8;
+	const double kDefaultTStep = 0.0004;
 
 	const int mWidthPx;
 	const int mHeightPx;
+	const double mHeightRatio;
 	const double mHalfWeight;
 	const int mSubpxRes;
 	int mLineColor;
+
+	int* mTopValues;
+	int* mBottomValues;
 
 	unsigned char* mCellShading;
 	unsigned int* mOutputRaster;
 	LICE_WrapperBitmap mWrapperBitmap;
 	IBitmap mOutputBitmap;
 
+	void ClearLineBoundCaches();
+	void CalculateLineBounds();
+	void ClearCellShading();
 	void ShadeCells();
 	void RenderPixels();
-
-	void ClearCellShading();
 
 	void AllocateArrays();
 	void DeleteArrays();
 
+	inline int Subpx_W();
+	inline int Subpx_H();
 	inline int ImageSize();
 	inline int Index(int x, int y);
 };
