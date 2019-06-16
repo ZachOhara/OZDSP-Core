@@ -1,7 +1,7 @@
 #include "EnvelopeShapeGraphic.h"
 
-EnvelopeShapeGraphic::EnvelopeShapeGraphic(IPlugBase* pPlug, IRECT rect, EnvelopeProcessor* pProcessor) :
-	FunctionLineGraphic(pPlug, rect, 0xFF4CAF50, 0x2200C853)
+EnvelopeShapeGraphic::EnvelopeShapeGraphic(IPlugBase* pPlug, IRECT rect, EnvelopeProcessor* pProcessor, int lineColor, int fillColor) :
+	FunctionLineGraphic(pPlug, rect, lineColor, fillColor)
 {
 	mpProcessor = pProcessor;
 }

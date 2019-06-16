@@ -12,7 +12,8 @@
 class EnvelopeShapeGraphic : public FunctionLineGraphic
 {
 public:
-	EnvelopeShapeGraphic(IPlugBase* pPlug, IRECT rect, EnvelopeProcessor* pProcessor);
+	EnvelopeShapeGraphic(IPlugBase* pPlug, IRECT rect, EnvelopeProcessor* pProcessor,
+		int lineColor, int fillColor);
 	~EnvelopeShapeGraphic();
 
 	bool IsDirty() override;
