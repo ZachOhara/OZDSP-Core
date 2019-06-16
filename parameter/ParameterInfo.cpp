@@ -21,7 +21,7 @@ ParameterInfo& ParameterInfo::MakeEnvelopeTimeParam()
 
 ParameterInfo& ParameterInfo::MakeEnvelopeShapeParam()
 {
-	static const double max_exponent = 2.0;
+	static const double max_exponent = 3.0;
 	static const double default_value = 0.0;
 	static const double step = 0.01;
 	return (*this)
