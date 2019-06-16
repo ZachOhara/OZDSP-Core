@@ -159,20 +159,26 @@ void FunctionLineGraphic::ShadeCells()
 {
 	int w_subpx = Subpx_W();
 	int h_subpx = Subpx_H();
-	for (int x = 0; x < w_subpx; x++) {
-		int x_bigpx = (int)(((double)x) / mSubpxRes);
-		// Shade the function fill
-		int y_func = mFunctionValues[x];
-		for (int y = 0; y <= y_func; y++) {
-			int y_bigpx = (int)(((double)y) / mSubpxRes);
-			mFillShading[Index(x_bigpx, mHeightPx - y_bigpx - 1)] += 1;
-		}
-		// Shade the line
-		int y_top = mTopValues[x];
-		int y_bot = mBottomValues[x];
-		for (int y = y_bot; y <= y_top; y++) {
-			int y_bigpx = (int)(((double)y) / mSubpxRes);
-			mLineShading[Index(x_bigpx, mHeightPx - y_bigpx - 1)] += 1;
+	int maxShade = mSubpxRes * mSubpxRes;
+	int index = 0;
+	for (int y_bigpx = mHeightPx - 1; y_bigpx >= 0; y_bigpx--) {
+		int y_subpx = y_bigpx * mSubpxRes;
+		for (int x_bigpx = 0; x_bigpx < mWidthPx; x_bigpx++) {
+			int x_subpx = x_bigpx * mSubpxRes;
+			// Shade the fill (only checks the southwest subpixel and uses an all-or nothing shade)
+			int y_func = mFunctionValues[x_subpx];
+			if (y_func > y_subpx) {
+				mFillShading[index] = maxShade;
+			}
+			// Shade the line (count the subpixels)
+			for (int i = 0; i < mSubpxRes; i++) {
+				int y_top = mTopValues[x_subpx + i];
+				int y_bot = mBottomValues[x_subpx + i];
+				int shade = min(y_top + 1, y_subpx + mSubpxRes) - max(y_bot, y_subpx);
+				if (shade > 0)
+					mLineShading[index] += shade;
+			}
+			index++;
 		}
 	}
 }
@@ -221,16 +227,6 @@ void FunctionLineGraphic::RenderPixels()
 				mOutputRaster[i] = pixel;
 			}
 		}
-
-		/*
-		// optimization: if there is no data at this index, skip all the math
-		if (mLineShading[i] == 0) {
-			mOutputRaster[i] = 0x00000000;
-			continue;
-		}
-		int newalpha = (int)(alpha * ((double)mLineShading[i]) / max_pxval);
-		mOutputRaster[i] = (newalpha << 24) | rgb;
-		*/
 	}
 }
 
