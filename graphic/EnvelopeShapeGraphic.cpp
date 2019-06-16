@@ -74,13 +74,13 @@ double EnvelopeShapeGraphic::GetLocalDerivative(double x, double ymax)
 	}
 	else if (x < decayRbound) {
 		double seg_progress = (x - attackRbound) / (decayRbound - attackRbound);
-		return -0.5 * (peakLevel - sustainLevel) * (decayExponent * pow(seg_progress, decayExponent - 1));
+		return -0.5 * (peakLevel - sustainLevel) * decayExponent * pow(seg_progress, decayExponent - 1);
 	}
 	else if (x < releaseLbound) {
 		return 0;
 	}
 	else {
 		double seg_progress = (x - releaseLbound) / (1 - releaseLbound);
-		return -0.5 * sustainLevel * (releaseExponent * pow(seg_progress, releaseExponent - 1));
+		return -0.5 * sustainLevel * releaseExponent * pow(seg_progress, releaseExponent - 1);
 	}
 }
