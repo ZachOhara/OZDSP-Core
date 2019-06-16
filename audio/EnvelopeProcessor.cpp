@@ -10,6 +10,11 @@ EnvelopeProcessor::~EnvelopeProcessor()
 {
 }
 
+void EnvelopeProcessor::AttachGraphic(EnvelopeShapeGraphic* pGraphic)
+{
+	mpGraphic = pGraphic;
+}
+
 double EnvelopeProcessor::GetAdjustedSample(double sample)
 {
 	if (!IsInStationarySegment()) {
@@ -117,6 +122,13 @@ void EnvelopeProcessor::HandleParamChange(int paramType, double newValue, int ne
 	case kReleaseShapeParam:
 		mReleaseExponent = GetExponentFromShapeParameter(newValue);
 		break;
+	}
+	// Update the graphic
+	if (mpGraphic != nullptr) {
+		mpGraphic->TriggerRedraw(GetParamNormalized(kAttackTimeParam),
+			GetParamNormalized(kDecayTimeParam), mSustainLevel,
+			GetParamNormalized(kReleaseTimeParam), mPeakLevel,
+			mAttackExponent, mDecayExponent, mReleaseExponent);
 	}
 }
 
