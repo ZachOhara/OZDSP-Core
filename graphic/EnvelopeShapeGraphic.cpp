@@ -21,6 +21,8 @@ double EnvelopeShapeGraphic::GetFunctionValue(double x, double ymax)
 	double decayTime = mpProcessor->GetParamNormalized(EnvelopeProcessor::kDecayTimeParam);
 	double sustainLevel = mpProcessor->GetParamNormalized(EnvelopeProcessor::kSustainLevelParam);
 	double releaseTime = mpProcessor->GetParamNormalized(EnvelopeProcessor::kReleaseTimeParam);
+	double peakLevel = EnvelopeProcessor::GetPeakLevelFromRatio(sustainLevel,
+		mpProcessor->GetParamNormalized(EnvelopeProcessor::kPeakLevelParam));
 	double attackExponent = EnvelopeProcessor::GetExponentFromShapeParameter(
 		mpProcessor->GetParamValue(EnvelopeProcessor::kAttackShapeParam));
 	double decayExponent = EnvelopeProcessor::GetExponentFromShapeParameter(
@@ -34,10 +36,10 @@ double EnvelopeShapeGraphic::GetFunctionValue(double x, double ymax)
 
 	if (x < attackRbound) {
 		double seg_progress = x / attackRbound;
-		return ymax * pow(seg_progress, attackExponent);
+		return ymax * peakLevel * pow(seg_progress, attackExponent);
 	} else if (x < decayRbound) {
 		double seg_progress = (x - attackRbound) / (decayRbound - attackRbound);
-		return ymax * (1 - ((1 - sustainLevel) * pow(seg_progress, decayExponent)));
+		return ymax * (peakLevel - ((peakLevel - sustainLevel) * pow(seg_progress, decayExponent)));
 	} else if (x < releaseLbound) {
 		return ymax * sustainLevel;
 	} else {
@@ -53,6 +55,8 @@ double EnvelopeShapeGraphic::GetLocalDerivative(double x, double ymax)
 	double decayTime = mpProcessor->GetParamNormalized(EnvelopeProcessor::kDecayTimeParam);
 	double sustainLevel = mpProcessor->GetParamNormalized(EnvelopeProcessor::kSustainLevelParam);
 	double releaseTime = mpProcessor->GetParamNormalized(EnvelopeProcessor::kReleaseTimeParam);
+	double peakLevel = EnvelopeProcessor::GetPeakLevelFromRatio(sustainLevel,
+		mpProcessor->GetParamNormalized(EnvelopeProcessor::kPeakLevelParam));
 	double attackExponent = EnvelopeProcessor::GetExponentFromShapeParameter(
 		mpProcessor->GetParamValue(EnvelopeProcessor::kAttackShapeParam));
 	double decayExponent = EnvelopeProcessor::GetExponentFromShapeParameter(
@@ -66,11 +70,11 @@ double EnvelopeShapeGraphic::GetLocalDerivative(double x, double ymax)
 
 	if (x < attackRbound) {
 		double seg_progress = x / attackRbound;
-		return attackExponent * pow(seg_progress, attackExponent - 1);
+		return peakLevel * attackExponent * pow(seg_progress, attackExponent - 1);
 	}
 	else if (x < decayRbound) {
 		double seg_progress = (x - attackRbound) / (decayRbound - attackRbound);
-		return -0.5 * (1 - sustainLevel) * (decayExponent * pow(seg_progress, decayExponent - 1));
+		return -0.5 * (peakLevel - sustainLevel) * (decayExponent * pow(seg_progress, decayExponent - 1));
 	}
 	else if (x < releaseLbound) {
 		return 0;

@@ -10,7 +10,7 @@ class EnvelopeProcessor : public ModularProcessor
 {
 public:
 	enum EParameters {kAttackTimeParam, kDecayTimeParam, kSustainLevelParam, kReleaseTimeParam,
-		kAttackShapeParam, kDecayShapeParam, kReleaseShapeParam, kNumParams};
+		kPeakLevelParam, kAttackShapeParam, kDecayShapeParam, kReleaseShapeParam, kNumParams};
 
 	EnvelopeProcessor();
 	~EnvelopeProcessor();
@@ -22,6 +22,7 @@ public:
 	bool IsNoteSilent();
 
 	static double GetExponentFromShapeParameter(double shape);
+	static double GetPeakLevelFromRatio(double sustainLevel, double peakRatio);
 
 protected:
 	void HandleParamChange(int paramType, double newValue, int newIntValue) override;
@@ -46,6 +47,8 @@ private:
 	double mDecayTime;
 	double mSustainLevel;
 	double mReleaseTime;
+	double mPeakRatio;
+	double mPeakLevel;
 	double mAttackExponent;
 	double mDecayExponent;
 	double mReleaseExponent;

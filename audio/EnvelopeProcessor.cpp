@@ -47,7 +47,7 @@ double EnvelopeProcessor::GetAdjustedSample(double sample)
 
 void EnvelopeProcessor::TriggerNoteAttack()
 {
-	ProgressToSegment(kAttackSegment, mAttackTime, 1.0, mAttackExponent);
+	ProgressToSegment(kAttackSegment, mAttackTime, mPeakLevel, mAttackExponent);
 }
 
 void EnvelopeProcessor::TriggerNoteRelease()
@@ -97,9 +97,16 @@ void EnvelopeProcessor::HandleParamChange(int paramType, double newValue, int ne
 	case kSustainLevelParam:
 		// incoming value is a percent
 		mSustainLevel = newValue / 100.0;
+		// also update the peak level
+		mPeakLevel = GetPeakLevelFromRatio(mSustainLevel, mPeakRatio);
 		break;
 	case kReleaseTimeParam:
 		mReleaseTime = newValue;
+		break;
+	case kPeakLevelParam:
+		// incoming value is a percent
+		mPeakRatio = newValue / 100.0;
+		mPeakLevel = GetPeakLevelFromRatio(mSustainLevel, mPeakRatio);
 		break;
 	case kAttackShapeParam:
 		mAttackExponent = GetExponentFromShapeParameter(newValue);
@@ -128,4 +135,9 @@ double EnvelopeProcessor::GetExponentFromShapeParameter(double shape)
 	else {
 		return 1.0 / (abs(shape) + 1);
 	}
+}
+
+double EnvelopeProcessor::GetPeakLevelFromRatio(double sustainLevel, double peakRatio)
+{
+	return sustainLevel + (peakRatio * (1 - sustainLevel));
 }
