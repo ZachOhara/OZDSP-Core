@@ -94,10 +94,11 @@ void EnvelopeProcessor::HandleParamChange(int paramType, double newValue, int ne
 {
 	switch (paramType) {
 	case kAttackTimeParam:
-		mAttackTime = newValue;
+		// incoming time value is in milliseconds; we want seconds
+		mAttackTime = newValue / 1000.0;
 		break;
 	case kDecayTimeParam:
-		mDecayTime = newValue;
+		mDecayTime = newValue / 1000.0;;
 		break;
 	case kSustainLevelParam:
 		// incoming value is a percent
@@ -106,7 +107,7 @@ void EnvelopeProcessor::HandleParamChange(int paramType, double newValue, int ne
 		mPeakLevel = GetPeakLevelFromRatio(mSustainLevel, mPeakRatio);
 		break;
 	case kReleaseTimeParam:
-		mReleaseTime = newValue;
+		mReleaseTime = newValue / 1000.0;
 		break;
 	case kPeakLevelParam:
 		// incoming value is a percent

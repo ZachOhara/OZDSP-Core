@@ -10,12 +10,12 @@ ParameterInfo::~ParameterInfo()
 
 ParameterInfo& ParameterInfo::MakeEnvelopeTimeParam()
 {
-	static const double min_s = 0.001;
-	static const double max_s = 2.0;
-	static const double default_s = 0.001;
-	static const double step_s = 0.001;
+	static const double min_ms = 1.0;
+	static const double max_ms = 2000.0;
+	static const double default_ms = 1.0;
+	static const double step_ms = 1.0;
 	return (*this)
-		.InitNumericParam(default_s, min_s, max_s, step_s, "s")
+		.InitNumericParam(default_ms, min_ms, max_ms, step_ms, "ms")
 		.SetValueShapeFactor(3.0);
 }
 
