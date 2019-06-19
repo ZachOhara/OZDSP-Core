@@ -28,7 +28,7 @@ public:
 	// Setters for specific settings
 	ParameterInfo& SetValueShapeFactor(double weightFactor);
 	ParameterInfo& AddSpecialDisplayValue(int value, std::string display);
-	ParameterInfo& SetLabelEditSize(int nChars, int widthPx = -1);
+	ParameterInfo& SetLabelEditSize(int editChars, int sizeChars = -1);
 
 	// Accessors for all parameter types
 	bool IsParam();

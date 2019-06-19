@@ -25,7 +25,8 @@ ParameterInfo& ParameterInfo::MakeEnvelopeShapeParam()
 	static const double default_value = 0.0;
 	static const double step = 0.01;
 	return (*this)
-		.InitNumericParam(default_value, -max_exponent, max_exponent, step, "");
+		.InitNumericParam(default_value, -max_exponent, max_exponent, step, "")
+		.SetLabelEditSize(5, 4);
 }
 
 ParameterInfo& ParameterInfo::MakeFrequencyParam()
@@ -111,8 +112,7 @@ ParameterInfo& ParameterInfo::InitLabel(int fontSize, int offsetPx)
 	mLabelVerticalOffsetPx = offsetPx;
 	// Use these default values
 	mLabelHeightPx = mLabelFontSize - 1; // This is an approximation but it works
-	mLabelEditChars = 5;
-	mLabelEditWidthPx = mLabelEditChars * (mLabelFontSize * 0.66); // gross approximation
+	SetLabelEditSize(5);
 	return *this;
 }
 
@@ -128,16 +128,14 @@ ParameterInfo& ParameterInfo::AddSpecialDisplayValue(int value, std::string disp
 	return *this;
 }
 
-ParameterInfo& ParameterInfo::SetLabelEditSize(int nChars, int widthPx)
+ParameterInfo& ParameterInfo::SetLabelEditSize(int editChars, int sizeChars)
 {
-	mLabelEditChars = nChars;
-	if (widthPx != -1) {
-		mLabelEditWidthPx = widthPx;
-	} else {
-		// auto calculate
-		mLabelEditWidthPx = mLabelEditChars * (mLabelFontSize * 0.66);
-		// gross approximation but it gets us close enough
-	}
+	mLabelEditChars = editChars;
+	if (sizeChars == -1)
+		sizeChars = editChars;
+	mLabelEditWidthPx = sizeChars * (mLabelFontSize * 0.65);
+	// This constant is chosen based on experimentation
+	// It is the approximate width to height ratio of a character
 	return *this;
 }
 
