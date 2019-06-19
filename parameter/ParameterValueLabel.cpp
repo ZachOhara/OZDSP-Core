@@ -74,5 +74,5 @@ IText ParameterValueLabel::ConstructEditingText(int fontSize)
 
 IText ParameterValueLabel::ConstructText(int fontSize, IColor color)
 {
-	return IText(fontSize, &color, "Roboto", IText::kStyleNormal, IText::kAlignCenter, 0, IText::kQualityDefault);
+	return IText(fontSize, &color, "Roboto Regular", IText::kStyleNormal, IText::kAlignCenter, 0, IText::kQualityDefault);
 }

@@ -210,12 +210,14 @@ IRECT CorePlugBase::ConstructLabelRect(ParameterInfo& param, IBitmap& bitmap)
 	int controlWidth = bitmap.frameWidth();
 	int controlHeight = bitmap.frameHeight();
 
-	int sideBuffer = param.LabelWidthBuffer() / 2;
+	// Commented since label width buffer is on probation
+	//int sideBuffer = param.LabelWidthBuffer() / 2;
+	int sideBuffer = 0;
 
 	int rectLeft = controlX - sideBuffer;
 	int rectRight = controlX + controlWidth + sideBuffer;
 
-	int rectTop = controlY + controlHeight + param.LabelVerticalBuffer();
+	int rectTop = controlY + controlHeight + param.LabelVerticalOffset();
 	int rectBottom = rectTop + param.LabelHeight();
 
 	return IRECT(rectLeft, rectTop, rectRight, rectBottom);

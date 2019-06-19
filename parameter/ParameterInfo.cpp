@@ -105,10 +105,15 @@ ParameterInfo& ParameterInfo::InitNumericParam(double defaultValue, double min, 
 	return *this;
 }
 
-ParameterInfo& ParameterInfo::InitLabel()
+ParameterInfo& ParameterInfo::InitLabel(int fontSize, int offsetPx)
 {
 	mIsParamLabeled = true;
-	// Use the pre-set default values
+	mLabelFontSize = fontSize;
+	mLabelVerticalOffsetPx = offsetPx;
+	// Use these default values
+	mLabelHeightPx = 15;
+	mLabelEditWidthPx = 60;
+	mLabelEditChars = 6;
 	return *this;
 }
 
@@ -126,7 +131,7 @@ ParameterInfo& ParameterInfo::AddSpecialDisplayValue(int value, std::string disp
 
 ParameterInfo& ParameterInfo::SetLabelEditWidth(int editWidth)
 {
-	mLabelEditWidth = editWidth;
+	mLabelEditWidthPx = editWidth;
 	return *this;
 }
 
@@ -231,24 +236,24 @@ bool ParameterInfo::IsParamLabeled()
 	return mIsParamLabeled;
 }
 
-int ParameterInfo::LabelVerticalBuffer()
+int ParameterInfo::LabelFontSize()
 {
-	return mLabelVerticalBuffer;
+	return mLabelFontSize;
 }
 
-int ParameterInfo::LabelWidthBuffer()
+int ParameterInfo::LabelVerticalOffset()
 {
-	return mLabelWidthBuffer;
+	return mLabelVerticalOffsetPx;
 }
 
 int ParameterInfo::LabelHeight()
 {
-	return mLabelHeight;
+	return mLabelHeightPx;
 }
 
 int ParameterInfo::LabelEditWidth()
 {
-	return mLabelEditWidth;
+	return mLabelEditWidthPx;
 }
 
 int ParameterInfo::LabelEditChars()
@@ -256,7 +261,9 @@ int ParameterInfo::LabelEditChars()
 	return mLabelEditChars;
 }
 
-int ParameterInfo::LabelFontSize()
+/*
+int ParameterInfo::LabelWidthBuffer()
 {
-	return mLabelFontSize;
+	return mLabelWidthBuffer;
 }
+*/

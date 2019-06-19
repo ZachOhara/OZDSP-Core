@@ -23,7 +23,7 @@ public:
 	ParameterInfo& InitSelectionParam(std::vector<std::string> states, bool isDropdown);
 	ParameterInfo& InitNumericParam(double defaultValue, double min, double max,
 		double step, std::string unit);
-	ParameterInfo& InitLabel();
+	ParameterInfo& InitLabel(int fontSize, int offsetPx);
 
 	// Setters for specific settings
 	ParameterInfo& SetValueShapeFactor(double weightFactor);
@@ -57,12 +57,13 @@ public:
 
 	// Accessors for label data
 	bool IsParamLabeled();
-	int LabelVerticalBuffer();
-	int LabelWidthBuffer();
+	int LabelFontSize();
+	int LabelVerticalOffset();
 	int LabelHeight();
 	int LabelEditWidth();
 	int LabelEditChars();
-	int LabelFontSize();
+	// Label width buffer is commented for now because I don't think it's necessary
+	//int LabelWidthBuffer();
 
 private:
 	// Note: the project will need to be cleaned / rebuilt if these defaults change
@@ -92,12 +93,13 @@ private:
 
 	// Data for parameters with labels
 	bool mIsParamLabeled = false;
-	int mLabelVerticalBuffer = -10; // space between bottom of bitmap and top of label
-	int mLabelWidthBuffer = 0; // two-sided space between edge of label and edge of bitmap (positive value makes label bigger)
-	int mLabelHeight = 15; // based on font size
-	int mLabelEditWidth = 60; // should be big enough to fully cover the label text
-	int mLabelEditChars = 6; // based on edit width
-	int mLabelFontSize = 18;
+	int mLabelFontSize;
+	int mLabelVerticalOffsetPx;
+	int mLabelHeightPx; // based on font size
+	int mLabelEditWidthPx; // should be big enough to fully cover the label text
+	int mLabelEditChars; // based on edit width
+	// This is commented for now because I don't think it's necessary
+	//int mLabelWidthBuffer = 0; // two-sided space between edge of label and edge of bitmap (positive value makes label bigger)
 };
 
 #endif // ! __PARAMETER_INFO_H__
