@@ -28,8 +28,7 @@ public:
 	// Setters for specific settings
 	ParameterInfo& SetValueShapeFactor(double weightFactor);
 	ParameterInfo& AddSpecialDisplayValue(int value, std::string display);
-	ParameterInfo& SetLabelEditWidth(int editWidth);
-	ParameterInfo& SetLabelEditChars(int editChars);
+	ParameterInfo& SetLabelEditSize(int nChars, int widthPx = -1);
 
 	// Accessors for all parameter types
 	bool IsParam();
@@ -59,9 +58,9 @@ public:
 	bool IsParamLabeled();
 	int LabelFontSize();
 	int LabelVerticalOffset();
+	int LabelEditChars();
 	int LabelHeight();
 	int LabelEditWidth();
-	int LabelEditChars();
 	// Label width buffer is commented for now because I don't think it's necessary
 	//int LabelWidthBuffer();
 
@@ -95,9 +94,9 @@ private:
 	bool mIsParamLabeled = false;
 	int mLabelFontSize;
 	int mLabelVerticalOffsetPx;
+	int mLabelEditChars;
 	int mLabelHeightPx; // based on font size
 	int mLabelEditWidthPx; // should be big enough to fully cover the label text
-	int mLabelEditChars; // based on edit width
 	// This is commented for now because I don't think it's necessary
 	//int mLabelWidthBuffer = 0; // two-sided space between edge of label and edge of bitmap (positive value makes label bigger)
 };

@@ -37,8 +37,7 @@ ParameterInfo& ParameterInfo::MakeFrequencyParam()
 	return (*this)
 		.InitNumericParam(default_hz, min_hz, max_hz, step_hz, "Hz")
 		.SetValueShapeFactor(3.0)
-		.SetLabelEditWidth(80)
-		.SetLabelEditChars(8);
+		.SetLabelEditSize(8);
 }
 
 ParameterInfo& ParameterInfo::MakePercentageParam(double defaultValue)
@@ -111,9 +110,9 @@ ParameterInfo& ParameterInfo::InitLabel(int fontSize, int offsetPx)
 	mLabelFontSize = fontSize;
 	mLabelVerticalOffsetPx = offsetPx;
 	// Use these default values
-	mLabelHeightPx = 15;
-	mLabelEditWidthPx = 60;
-	mLabelEditChars = 6;
+	mLabelHeightPx = mLabelFontSize - 1; // This is an approximation but it works
+	mLabelEditChars = 5;
+	mLabelEditWidthPx = mLabelEditChars * (mLabelFontSize * 0.66); // gross approximation
 	return *this;
 }
 
@@ -129,15 +128,16 @@ ParameterInfo& ParameterInfo::AddSpecialDisplayValue(int value, std::string disp
 	return *this;
 }
 
-ParameterInfo& ParameterInfo::SetLabelEditWidth(int editWidth)
+ParameterInfo& ParameterInfo::SetLabelEditSize(int nChars, int widthPx)
 {
-	mLabelEditWidthPx = editWidth;
-	return *this;
-}
-
-ParameterInfo& ParameterInfo::SetLabelEditChars(int editChars)
-{
-	mLabelEditChars = editChars;
+	mLabelEditChars = nChars;
+	if (widthPx != -1) {
+		mLabelEditWidthPx = widthPx;
+	} else {
+		// auto calculate
+		mLabelEditWidthPx = mLabelEditChars * (mLabelFontSize * 0.66);
+		// gross approximation but it gets us close enough
+	}
 	return *this;
 }
 
@@ -246,6 +246,11 @@ int ParameterInfo::LabelVerticalOffset()
 	return mLabelVerticalOffsetPx;
 }
 
+int ParameterInfo::LabelEditChars()
+{
+	return mLabelEditChars;
+}
+
 int ParameterInfo::LabelHeight()
 {
 	return mLabelHeightPx;
@@ -254,11 +259,6 @@ int ParameterInfo::LabelHeight()
 int ParameterInfo::LabelEditWidth()
 {
 	return mLabelEditWidthPx;
-}
-
-int ParameterInfo::LabelEditChars()
-{
-	return mLabelEditChars;
 }
 
 /*
