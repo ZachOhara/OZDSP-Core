@@ -44,7 +44,7 @@ ParameterInfo& ParameterInfo::MakeFrequencyParam()
 ParameterInfo& ParameterInfo::MakePercentageParam(double defaultValue)
 {
 	return (*this)
-		.InitNumericParam(defaultValue, 0.0, 100.0, 0.01, "%");
+		.InitNumericParam(defaultValue, 0.0, 100.0, 0.1, "%");
 }
 
 ParameterInfo& ParameterInfo::MakeVolumeReductionParam()
