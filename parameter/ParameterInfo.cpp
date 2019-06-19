@@ -11,7 +11,7 @@ ParameterInfo::~ParameterInfo()
 ParameterInfo& ParameterInfo::MakeEnvelopeTimeParam()
 {
 	static const double min_ms = 1.0;
-	static const double max_ms = 2000.0;
+	static const double max_ms = 3000.0;
 	static const double default_ms = 1.0;
 	static const double step_ms = 1.0;
 	return (*this)
